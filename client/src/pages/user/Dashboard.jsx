@@ -1,5 +1,5 @@
 import React from "react";
-
+import AnalyticsCharts from "../../components/dashboard/AnalyticsCharts";
 import {
   FaArrowUp,
   FaArrowDown,
@@ -141,14 +141,11 @@ const Dashboard = () => {
 
           </div>
 
-          {/* CHART PLACEHOLDER */}
-          <div className="mt-8 h-[320px] rounded-3xl bg-[#F5F7FF] flex items-center justify-center">
+        <div className="mt-8">
 
-            <h3 className="text-2xl font-semibold text-gray-400">
-              Analytics Chart Coming Soon
-            </h3>
+        <AnalyticsCharts />
 
-          </div>
+        </div>
 
         </div>
 
