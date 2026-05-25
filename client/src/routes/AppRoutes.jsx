@@ -10,11 +10,21 @@ import Pricing from "../pages/guest/Pricing";
 import Contact from "../pages/guest/Contact";
 import FAQ from "../pages/guest/FAQ";
 
-import AuthLayout from "../layouts/AuthLayout";
 
+
+import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+
+
+
+import UserLayout from "../layouts/UserLayout";
+import Dashboard from "../pages/user/Dashboard";
+import Expenses from "../pages/user/Expenses";
+import Income from "../pages/user/Income";
+import Settings from "../pages/user/Settings";
+
 
 const AppRoutes = () => {
   return (
@@ -47,6 +57,20 @@ const AppRoutes = () => {
   <     Route path="register" element={<Register />} />
 
         <Route path="forgot-password" element={<ForgotPassword />} />
+
+        </Route>
+
+
+        {/* USER ROUTES */}
+        <Route path="/" element={<UserLayout />}>
+
+        <Route path="dashboard" element={<Dashboard />} />
+
+        <Route path="expenses" element={<Expenses />} />
+
+        <Route path="income" element={<Income />} />
+
+        <Route path="settings" element={<Settings />} />
 
         </Route>
 
