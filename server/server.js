@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/AuthRoutes.js";
+import expenseRoutes from "./routes/ExpenseRoutes.js";
 
 dotenv.config();
 
@@ -16,8 +17,9 @@ app.use(cors());
 
 app.use(express.json());
 
-/* ROUTES */
 app.use("/api/auth", authRoutes);
+
+app.use("/api/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Finora API Running...");
