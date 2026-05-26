@@ -1,4 +1,7 @@
-import React from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   FaBell,
@@ -13,9 +16,56 @@ const DashboardNavbar = ({
 
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage.getItem("userInfo")
-  );
+  const [hasUnread,
+    setHasUnread] =
+    useState(false);
+
+  const checkUnread =
+    () => {
+
+      const userInfo =
+        JSON.parse(
+          localStorage.getItem(
+            "userInfo"
+          )
+        );
+
+      const unread =
+        userInfo?.notifications?.some(
+          (item) =>
+            item.read === false
+        );
+
+      setHasUnread(unread);
+
+    };
+
+  useEffect(() => {
+
+    checkUnread();
+
+    window.addEventListener(
+      "notificationUpdate",
+      checkUnread
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "notificationUpdate",
+        checkUnread
+      );
+
+    };
+
+  }, []);
+
+  const userInfo =
+    JSON.parse(
+      localStorage.getItem(
+        "userInfo"
+      )
+    );
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
@@ -55,7 +105,11 @@ const DashboardNavbar = ({
 
           <FaBell className="text-2xl text-gray-600" />
 
-          <span className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></span>
+          {hasUnread && (
+
+            <span className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></span>
+
+          )}
 
         </button>
 
@@ -64,12 +118,15 @@ const DashboardNavbar = ({
           onClick={() =>
             navigate("/settings")
           }
+          className="overflow-hidden rounded-full"
         >
 
-          {user?.profileImage ? (
+          {userInfo?.profileImage ? (
 
             <img
-              src={user.profileImage}
+              src={
+                userInfo.profileImage
+              }
               alt=""
               className="h-12 w-12 rounded-full object-cover border-2 border-blue-100"
             />
@@ -78,7 +135,7 @@ const DashboardNavbar = ({
 
             <div className="h-12 w-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold uppercase text-lg">
 
-              {user?.name?.charAt(0)}
+              {userInfo?.name?.charAt(0)}
 
             </div>
 

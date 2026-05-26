@@ -25,7 +25,7 @@ import Dashboard from "../pages/user/Dashboard";
 import Expenses from "../pages/user/Expenses";
 import Income from "../pages/user/Income";
 import Settings from "../pages/user/Settings";
-
+import Notifications from "../pages/user/Notifications";
 
 const AppRoutes = () => {
   return (
@@ -79,6 +79,8 @@ const AppRoutes = () => {
         <Route path="income" element={<Income />} />
 
         <Route path="settings" element={<Settings />} />
+        <Route path="/notifications" element={<Notifications />}
+/>
 
         </Route>
 

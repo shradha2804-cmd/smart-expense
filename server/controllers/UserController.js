@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/UserModel.js";
 
 
-// GENERATE TOKEN
+// TOKEN
 const generateToken = (id) => {
 
   return jwt.sign(
@@ -68,18 +68,17 @@ export const updateUserProfile = async (
     user.name =
       req.body.name || user.name;
 
-    user.email =
-      req.body.email || user.email;
-
     user.phone =
       req.body.phone || user.phone;
 
-   if (req.file) {
+    // PROFILE IMAGE
+    if (req.file) {
 
-  user.profileImage =
-    `http://localhost:5000/uploads/${req.file.filename}`;
+      user.profileImage =
+        `http://localhost:5000/uploads/${req.file.filename}`;
 
-}
+    }
+
     // CHANGE PASSWORD
     if (
       req.body.currentPassword &&
@@ -112,27 +111,29 @@ export const updateUserProfile = async (
 
     }
 
-    // ADD NOTIFICATION
+    // NOTIFICATION
     user.notifications.unshift({
       message:
         "Profile updated successfully",
+      read: false,
     });
 
     const updatedUser =
       await user.save();
-res.json({
-  _id: updatedUser._id,
-  name: updatedUser.name,
-  email: updatedUser.email,
-  phone: updatedUser.phone,
-  profileImage:
-    updatedUser.profileImage,
-  notifications:
-    updatedUser.notifications,
-  token: generateToken(
-    updatedUser._id
-  ),
-});
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      phone: updatedUser.phone,
+      profileImage:
+        updatedUser.profileImage,
+      notifications:
+        updatedUser.notifications,
+      token: generateToken(
+        updatedUser._id
+      ),
+    });
 
   } catch (error) {
 

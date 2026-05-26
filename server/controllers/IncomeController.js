@@ -1,27 +1,62 @@
 import Income from "../models/IncomeModel.js";
 
+import User from "../models/UserModel.js";
+
 
 // ADD INCOME
-export const addIncome = async (req, res) => {
+export const addIncome = async (
+  req,
+  res
+) => {
 
   try {
 
     const {
       source,
-      category,
       amount,
       date,
     } = req.body;
 
-    const income = await Income.create({
-      user: req.user._id,
-      source,
-      category,
-      amount,
-      date,
+    // VALIDATION
+    if (
+      !source ||
+      !amount ||
+      !date
+    ) {
+
+      return res.status(400).json({
+        message:
+          "Please fill all fields",
+      });
+
+    }
+
+    // CREATE INCOME
+    const income =
+      await Income.create({
+        user: req.user._id,
+        source,
+        amount,
+        date,
+      });
+
+    // NOTIFICATION
+    const user =
+      await User.findById(
+        req.user._id
+      );
+
+    user.notifications.unshift({
+      message:
+        `Income added: ₹${amount} from ${source}`,
+      read: false,
     });
 
-    res.status(201).json(income);
+    await user.save();
+
+    res.status(201).json(
+      income
+    );
 
   } catch (error) {
 
@@ -34,16 +69,22 @@ export const addIncome = async (req, res) => {
 };
 
 
-// GET INCOMES
-export const getIncomes = async (req, res) => {
+// GET INCOME
+export const getIncome = async (
+  req,
+  res
+) => {
 
   try {
 
-    const incomes = await Income.find({
-      user: req.user._id,
-    }).sort({ createdAt: -1 });
+    const income =
+      await Income.find({
+        user: req.user._id,
+      }).sort({
+        createdAt: -1,
+      });
 
-    res.json(incomes);
+    res.json(income);
 
   } catch (error) {
 
@@ -57,18 +98,36 @@ export const getIncomes = async (req, res) => {
 
 
 // DELETE INCOME
-export const deleteIncome = async (req, res) => {
+export const deleteIncome = async (
+  req,
+  res
+) => {
 
   try {
 
-    const income = await Income.findById(
-      req.params.id
-    );
+    const income =
+      await Income.findById(
+        req.params.id
+      );
 
     if (!income) {
 
       return res.status(404).json({
-        message: "Income not found",
+        message:
+          "Income not found",
+      });
+
+    }
+
+    // SECURITY CHECK
+    if (
+      income.user.toString() !==
+      req.user._id.toString()
+    ) {
+
+      return res.status(401).json({
+        message:
+          "Not authorized",
       });
 
     }
@@ -76,7 +135,8 @@ export const deleteIncome = async (req, res) => {
     await income.deleteOne();
 
     res.json({
-      message: "Income deleted",
+      message:
+        "Income deleted",
     });
 
   } catch (error) {

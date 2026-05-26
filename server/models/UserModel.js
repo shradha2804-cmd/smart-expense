@@ -32,6 +32,11 @@ const userSchema = mongoose.Schema(
       {
         message: String,
 
+        read: {
+          type: Boolean,
+          default: false,
+        },
+
         createdAt: {
           type: Date,
           default: Date.now,
