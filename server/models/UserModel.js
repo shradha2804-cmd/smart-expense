@@ -17,6 +17,21 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    notifications: [
+      {
+        message: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
 
   {
@@ -24,6 +39,9 @@ const userSchema = mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(
+  "User",
+  userSchema
+);
 
 export default User;
