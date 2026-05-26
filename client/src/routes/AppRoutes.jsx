@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 import GuestLayout from "../layouts/GuestLayout";
 
@@ -62,7 +63,14 @@ const AppRoutes = () => {
 
 
         {/* USER ROUTES */}
-        <Route path="/" element={<UserLayout />}>
+        <Route
+        path="/"
+        element={
+        <ProtectedRoute>
+        <UserLayout />
+        </ProtectedRoute>
+        }
+>
 
         <Route path="dashboard" element={<Dashboard />} />
 

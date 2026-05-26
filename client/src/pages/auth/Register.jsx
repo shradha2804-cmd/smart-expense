@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import toast from "react-hot-toast";
+
+import API from "../../utils/api";
 
 import {
   FaGoogle,
@@ -10,7 +14,52 @@ import {
 
 const Register = () => {
 
-  const [showPassword, setShowPassword] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
+
+const [name, setName] = useState("");
+
+const [email, setEmail] = useState("");
+
+const [password, setPassword] = useState("");
+
+const [loading, setLoading] = useState(false);
+
+const navigate = useNavigate();
+
+const handleRegister = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    setLoading(true);
+
+    const { data } = await API.post(
+      "/auth/register",
+      {
+        name,
+        email,
+        password,
+      }
+    );
+toast.success("Registration Successful");
+
+navigate("/login");
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message ||
+      "Something went wrong"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -52,7 +101,10 @@ const Register = () => {
         </div>
 
         {/* FORM */}
-        <form className="space-y-5">
+        <form
+  onSubmit={handleRegister}
+  className="space-y-5"
+>
 
           {/* NAME */}
           <div>
@@ -60,12 +112,13 @@ const Register = () => {
             <label className="block mb-2 text-sm font-medium text-gray-700">
               Full Name
             </label>
-
-            <input
-              type="text"
-              placeholder="Enter your full name"
-              className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
-            />
+        <input
+  type="text"
+  placeholder="Enter your full name"
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+/>
 
           </div>
 
@@ -79,6 +132,8 @@ const Register = () => {
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
             />
 
@@ -94,11 +149,12 @@ const Register = () => {
             <div className="relative">
 
               <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Create password"
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
-              />
-
+  type={showPassword ? "text" : "password"}
+  placeholder="Create password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
+/>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -114,12 +170,14 @@ const Register = () => {
           </div>
 
           {/* BUTTON */}
-          <button className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition">
+   <button
+  type="submit"
+  className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition"
+>
 
-            Create Account
+  {loading ? "Loading..." : "Create Account"}
 
-          </button>
-
+</button>
         </form>
 
         {/* LOGIN */}

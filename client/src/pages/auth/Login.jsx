@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
+import API from "../../utils/api";
 import {
   FaGoogle,
   FaEye,
@@ -10,7 +14,55 @@ import {
 
 const Login = () => {
 
-  const [showPassword, setShowPassword] = useState(false);
+ const [showPassword, setShowPassword] = useState(false);
+
+const [email, setEmail] = useState("");
+
+const [password, setPassword] = useState("");
+
+const [loading, setLoading] = useState(false);
+
+const navigate = useNavigate();
+
+const handleLogin = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    setLoading(true);
+
+    const { data } = await API.post(
+      "/auth/login",
+      {
+        email,
+        password,
+      }
+    );
+
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(data)
+    );
+
+    toast.success("Login Successful");
+
+    navigate("/dashboard");
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message ||
+      "Something went wrong"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -52,7 +104,10 @@ const Login = () => {
         </div>
 
         {/* FORM */}
-        <form className="space-y-5">
+       <form
+  onSubmit={handleLogin}
+  className="space-y-5"
+>
 
           {/* EMAIL */}
           <div>
@@ -62,10 +117,12 @@ const Login = () => {
             </label>
 
             <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
-            />
+  type="email"
+  placeholder="Enter your email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+/>
 
           </div>
 
@@ -78,11 +135,13 @@ const Login = () => {
 
             <div className="relative">
 
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
-              />
+             <input
+  type={showPassword ? "text" : "password"}
+  placeholder="Enter your password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
+/>
 
               <button
                 type="button"
@@ -111,11 +170,14 @@ const Login = () => {
           </div>
 
           {/* BUTTON */}
-          <button className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition">
+     <button
+  type="submit"
+  className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition"
+>
 
-            Login
+  {loading ? "Loading..." : "Login"}
 
-          </button>
+</button>
 
         </form>
 
