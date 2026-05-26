@@ -84,65 +84,67 @@ const Settings = () => {
   }, []);
 
   // IMAGE UPLOAD
-  const uploadImage = async (
-    e
-  ) => {
+ const uploadImage = async (
+  e
+) => {
 
-    const file =
-      e.target.files[0];
+  const file =
+    e.target.files[0];
 
-    if (!file) return;
+  if (!file) return;
+
+  try {
+
+    setLoadingImage(true);
 
     const formData =
       new FormData();
 
     formData.append(
-      "file",
+      "profileImage",
       file
     );
 
-    formData.append(
-      "upload_preset",
-      "finora_upload"
-    );
-
-    try {
-
-      setLoadingImage(true);
-
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/demo/image/upload",
+    const { data } =
+      await API.put(
+        "/users/profile",
+        formData,
         {
-          method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type":
+              "multipart/form-data",
+          },
         }
       );
 
-      const data =
-        await res.json();
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(data)
+    );
 
-      setProfileImage(
-        data.secure_url
-      );
+    setProfileImage(
+      data.profileImage
+    );
 
-      toast.success(
-        "Image Uploaded"
-      );
+    toast.success(
+      "Profile image updated"
+    );
 
-    } catch (error) {
+    window.location.reload();
 
-      toast.error(
-        "Image upload failed"
-      );
+  } catch (error) {
 
-    } finally {
+    toast.error(
+      "Image upload failed"
+    );
 
-      setLoadingImage(false);
+  } finally {
 
-    }
+    setLoadingImage(false);
 
-  };
+  }
 
+};
   // UPDATE PROFILE
   const handleProfileUpdate =
     async (e) => {
@@ -249,62 +251,85 @@ const Settings = () => {
           onSubmit={handleProfileUpdate}
           className="mt-8"
         >
+{/* PROFILE */}
+<div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
 
-          {/* PROFILE */}
-          <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
+  {/* HIDDEN INPUT */}
+  <input
+    type="file"
+    accept="image/*"
+    id="profileUpload"
+    onChange={uploadImage}
+    className="hidden"
+  />
 
-            {/* IMAGE */}
-            <div>
+  {/* PROFILE IMAGE */}
+  <div
+    onClick={() =>
+      document
+        .getElementById(
+          "profileUpload"
+        )
+        .click()
+    }
+    className="cursor-pointer relative group"
+  >
 
-              {profileImage ? (
+    {profileImage ? (
 
-                <img
-                  src={profileImage}
-                  alt=""
-                  className="h-28 w-28 rounded-full object-cover border-4 border-blue-100"
-                />
+      <img
+        src={profileImage}
+        alt=""
+        className="h-28 w-28 rounded-full object-cover border-4 border-blue-100"
+      />
 
-              ) : (
+    ) : (
 
-                <div className="h-28 w-28 rounded-full bg-blue-600 text-white flex items-center justify-center text-5xl font-bold uppercase">
+      <div className="h-28 w-28 rounded-full bg-blue-600 text-white flex items-center justify-center text-5xl font-bold uppercase">
 
-                  {name?.charAt(0)}
+        {name?.charAt(0)}
 
-                </div>
+      </div>
 
-              )}
+    )}
 
-            </div>
+    {/* OVERLAY */}
+    <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-sm font-medium">
 
-            {/* UPLOAD */}
-            <div className="flex-1">
+      Change
 
-              <label className="block mb-3 text-sm font-medium text-gray-700">
+    </div>
 
-                Upload Profile Picture
+  </div>
 
-              </label>
+  {/* INFO */}
+  <div>
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={uploadImage}
-                className="w-full border border-gray-300 rounded-2xl px-4 py-3"
-              />
+    <h3 className="text-xl font-semibold text-[#0B132B]">
 
-              {loadingImage && (
+      {name}
 
-                <p className="mt-3 text-blue-600 text-sm">
+    </h3>
 
-                  Uploading image...
+    <p className="mt-2 text-gray-500">
 
-                </p>
+      Click profile image to change photo
 
-              )}
+    </p>
 
-            </div>
+    {loadingImage && (
 
-          </div>
+      <p className="mt-2 text-blue-600 text-sm">
+
+        Uploading image...
+
+      </p>
+
+    )}
+
+  </div>
+
+</div>
 
           {/* FORM */}
           <div className="grid md:grid-cols-2 gap-6">

@@ -74,10 +74,12 @@ export const updateUserProfile = async (
     user.phone =
       req.body.phone || user.phone;
 
-    user.profileImage =
-        req.body.profileImage ||
-        user.profileImage;
+   if (req.file) {
 
+  user.profileImage =
+    `http://localhost:5000/uploads/${req.file.filename}`;
+
+}
     // CHANGE PASSWORD
     if (
       req.body.currentPassword &&
