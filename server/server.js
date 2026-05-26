@@ -6,6 +6,8 @@ import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/AuthRoutes.js";
 import expenseRoutes from "./routes/ExpenseRoutes.js";
+import incomeRoutes from "./routes/IncomeRoutes.js";
+import dashboardRoutes from "./routes/DashboardRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +22,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 app.use("/api/expenses", expenseRoutes);
+
+app.use("/api/income", incomeRoutes);
+
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("Finora API Running...");

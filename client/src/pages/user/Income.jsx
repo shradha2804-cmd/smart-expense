@@ -1,37 +1,105 @@
-import React, { useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   FaPlus,
   FaTrash,
-  FaEdit,
 } from "react-icons/fa";
+
+import toast from "react-hot-toast";
+
+import API from "../../utils/api";
 
 const Income = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const incomes = [
-    {
-      source: "Salary",
-      category: "Job",
-      amount: "₹50,000",
-      date: "25 May 2026",
-    },
+  const [incomes, setIncomes] = useState([]);
 
-    {
-      source: "Freelancing",
-      category: "Side Income",
-      amount: "₹10,000",
-      date: "20 May 2026",
-    },
+  const [source, setSource] = useState("");
 
-    {
-      source: "Investments",
-      category: "Passive Income",
-      amount: "₹5,000",
-      date: "18 May 2026",
-    },
-  ];
+  const [category, setCategory] = useState("");
+
+  const [amount, setAmount] = useState("");
+
+  const [date, setDate] = useState("");
+
+  // FETCH
+  const fetchIncome = async () => {
+
+    try {
+
+      const { data } = await API.get("/income");
+
+      setIncomes(data);
+
+    } catch (error) {
+
+      toast.error("Failed to load income");
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    fetchIncome();
+
+  }, []);
+
+  // ADD
+  const handleAddIncome = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      await API.post("/income", {
+        source,
+        category,
+        amount,
+        date,
+      });
+
+      toast.success("Income Added");
+
+      setShowModal(false);
+
+      fetchIncome();
+
+      setSource("");
+      setCategory("");
+      setAmount("");
+      setDate("");
+
+    } catch (error) {
+
+      toast.error("Failed to add income");
+
+    }
+
+  };
+
+  // DELETE
+  const handleDelete = async (id) => {
+
+    try {
+
+      await API.delete(`/income/${id}`);
+
+      toast.success("Income Deleted");
+
+      fetchIncome();
+
+    } catch (error) {
+
+      toast.error("Failed to delete income");
+
+    }
+
+  };
 
   return (
     <section>
@@ -46,12 +114,11 @@ const Income = () => {
           </h1>
 
           <p className="mt-2 text-gray-500">
-            Manage and track all your income sources.
+            Manage and track all your income.
           </p>
 
         </div>
 
-        {/* BUTTON */}
         <button
           onClick={() => setShowModal(true)}
           className="bg-green-600 text-white px-6 py-3 rounded-2xl flex items-center gap-3 hover:bg-green-700 transition w-fit"
@@ -68,61 +135,71 @@ const Income = () => {
       {/* TABLE */}
       <div className="mt-8 bg-white rounded-3xl shadow-sm overflow-hidden">
 
-        {/* HEADER */}
         <div className="hidden md:grid grid-cols-5 bg-[#F5F7FF] p-5 font-semibold text-[#0B132B]">
 
           <h3>Source</h3>
           <h3>Category</h3>
           <h3>Amount</h3>
           <h3>Date</h3>
-          <h3 className="text-center">Actions</h3>
+          <h3 className="text-center">
+            Actions
+          </h3>
 
         </div>
 
-        {/* BODY */}
         <div>
 
-          {incomes.map((item, index) => (
+          {incomes.map((item) => (
 
             <div
-              key={index}
+              key={item._id}
               className="grid md:grid-cols-5 gap-4 p-5 border-t border-gray-100 items-center"
             >
 
               <div>
+
                 <p className="font-semibold text-[#0B132B]">
                   {item.source}
                 </p>
+
               </div>
 
               <div>
+
                 <p className="text-gray-500">
                   {item.category}
                 </p>
+
               </div>
 
               <div>
+
                 <p className="font-bold text-green-600">
-                  {item.amount}
+                  ₹{item.amount}
                 </p>
+
               </div>
 
               <div>
+
                 <p className="text-gray-500">
-                  {item.date}
+
+                  {new Date(
+                    item.date
+                  ).toLocaleDateString()}
+
                 </p>
+
               </div>
 
-              {/* ACTIONS */}
-              <div className="flex items-center justify-start md:justify-center gap-4">
+              <div className="flex justify-center">
 
-                <button className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition">
-
-                  <FaEdit />
-
-                </button>
-
-                <button className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition">
+                <button
+                  onClick={() =>
+                    handleDelete(item._id)
+                  }
+                  className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"
+                >
 
                   <FaTrash />
 
@@ -145,7 +222,6 @@ const Income = () => {
 
           <div className="bg-white rounded-[35px] p-6 md:p-8 w-full max-w-lg">
 
-            {/* TOP */}
             <div className="flex items-center justify-between">
 
               <h2 className="text-3xl font-bold text-[#0B132B]">
@@ -155,7 +231,9 @@ const Income = () => {
               </h2>
 
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() =>
+                  setShowModal(false)
+                }
                 className="text-2xl text-gray-500"
               >
                 ×
@@ -163,72 +241,50 @@ const Income = () => {
 
             </div>
 
-            {/* FORM */}
-            <form className="mt-8 space-y-5">
+            <form
+              onSubmit={handleAddIncome}
+              className="mt-8 space-y-5"
+            >
 
-              {/* SOURCE */}
-              <div>
+              <input
+                type="text"
+                placeholder="Income Source"
+                value={source}
+                onChange={(e) =>
+                  setSource(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+              />
 
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Income Source
-                </label>
+              <input
+                type="text"
+                placeholder="Category"
+                value={category}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+              />
 
-                <input
-                  type="text"
-                  placeholder="Enter source"
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-green-600"
-                />
+              <input
+                type="number"
+                placeholder="Amount"
+                value={amount}
+                onChange={(e) =>
+                  setAmount(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+              />
 
-              </div>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) =>
+                  setDate(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+              />
 
-              {/* CATEGORY */}
-              <div>
-
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Category
-                </label>
-
-                <select className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-green-600">
-
-                  <option>Job</option>
-                  <option>Business</option>
-                  <option>Investments</option>
-                  <option>Side Income</option>
-
-                </select>
-
-              </div>
-
-              {/* AMOUNT */}
-              <div>
-
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Amount
-                </label>
-
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-green-600"
-                />
-
-              </div>
-
-              {/* DATE */}
-              <div>
-
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Date
-                </label>
-
-                <input
-                  type="date"
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-green-600"
-                />
-
-              </div>
-
-              {/* BUTTON */}
               <button className="w-full bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700 transition">
 
                 Save Income

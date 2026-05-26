@@ -13,97 +13,83 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const pieData = [
-  { name: "Food", value: 400 },
-  { name: "Bills", value: 300 },
-  { name: "Travel", value: 300 },
-  { name: "Shopping", value: 200 },
-];
-
 const COLORS = [
   "#2563EB",
   "#16A34A",
   "#DC2626",
   "#F59E0B",
+  "#9333EA",
 ];
 
-const barData = [
-  {
-    month: "Jan",
-    income: 50000,
-    expense: 20000,
-  },
+const AnalyticsCharts = ({
+  pieChartData = [],
+  barChartData = [],
+}) => {
 
-  {
-    month: "Feb",
-    income: 42000,
-    expense: 18000,
-  },
-
-  {
-    month: "Mar",
-    income: 60000,
-    expense: 25000,
-  },
-
-  {
-    month: "Apr",
-    income: 55000,
-    expense: 23000,
-  },
-
-  {
-    month: "May",
-    income: 70000,
-    expense: 30000,
-  },
-];
-
-const AnalyticsCharts = () => {
   return (
     <div className="grid xl:grid-cols-2 gap-6">
 
       {/* PIE CHART */}
       <div className="bg-white rounded-3xl p-6 shadow-sm">
 
-        <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-[#0B132B]">
 
-          <h2 className="text-2xl font-bold text-[#0B132B]">
-            Expense Categories
-          </h2>
+          Expense Categories
 
-        </div>
+        </h2>
 
-        <div className="mt-8 h-[350px]">
+        <div className="mt-8">
 
-          <ResponsiveContainer width="100%" height="100%">
+          {pieChartData.length === 0 ? (
 
-            <PieChart>
+            <div className="h-[350px] flex items-center justify-center text-gray-500">
 
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={120}
-                label
-              >
+              No expense data found
 
-                {pieData.map((entry, index) => (
+            </div>
 
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+          ) : (
 
-                ))}
+            <ResponsiveContainer
+              width="100%"
+              height={350}
+            >
 
-              </Pie>
+              <PieChart>
 
-              <Tooltip />
+                <Pie
+                  data={pieChartData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={120}
+                  label
+                >
 
-            </PieChart>
+                  {pieChartData.map(
+                    (entry, index) => (
 
-          </ResponsiveContainer>
+                      <Cell
+                        key={index}
+                        fill={
+                          COLORS[
+                            index %
+                            COLORS.length
+                          ]
+                        }
+                      />
+
+                    )
+                  )}
+
+                </Pie>
+
+                <Tooltip />
+
+              </PieChart>
+
+            </ResponsiveContainer>
+
+          )}
 
         </div>
 
@@ -112,43 +98,56 @@ const AnalyticsCharts = () => {
       {/* BAR CHART */}
       <div className="bg-white rounded-3xl p-6 shadow-sm">
 
-        <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-[#0B132B]">
 
-          <h2 className="text-2xl font-bold text-[#0B132B]">
-            Monthly Overview
-          </h2>
+          Monthly Overview
 
-        </div>
+        </h2>
 
-        <div className="mt-8 h-[350px]">
+        <div className="mt-8">
 
-          <ResponsiveContainer width="100%" height="100%">
+          {barChartData.length === 0 ? (
 
-            <BarChart data={barData}>
+            <div className="h-[350px] flex items-center justify-center text-gray-500">
 
-              <CartesianGrid strokeDasharray="3 3" />
+              No monthly data found
 
-              <XAxis dataKey="month" />
+            </div>
 
-              <YAxis />
+          ) : (
 
-              <Tooltip />
+            <ResponsiveContainer
+              width="100%"
+              height={350}
+            >
 
-              <Bar
-                dataKey="income"
-                fill="#16A34A"
-                radius={[10, 10, 0, 0]}
-              />
+              <BarChart data={barChartData}>
 
-              <Bar
-                dataKey="expense"
-                fill="#DC2626"
-                radius={[10, 10, 0, 0]}
-              />
+                <CartesianGrid strokeDasharray="3 3" />
 
-            </BarChart>
+                <XAxis dataKey="month" />
 
-          </ResponsiveContainer>
+                <YAxis />
+
+                <Tooltip />
+
+                <Bar
+                  dataKey="income"
+                  fill="#16A34A"
+                  radius={[10, 10, 0, 0]}
+                />
+
+                <Bar
+                  dataKey="expense"
+                  fill="#DC2626"
+                  radius={[10, 10, 0, 0]}
+                />
+
+              </BarChart>
+
+            </ResponsiveContainer>
+
+          )}
 
         </div>
 

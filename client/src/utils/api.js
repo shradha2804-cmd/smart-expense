@@ -6,7 +6,8 @@ const API = axios.create({
 
 API.interceptors.request.use((req) => {
 
-  const userInfo = localStorage.getItem("userInfo");
+  const userInfo =
+    localStorage.getItem("userInfo");
 
   if (userInfo) {
 

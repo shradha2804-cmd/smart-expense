@@ -1,46 +1,86 @@
-import React from "react";
-import AnalyticsCharts from "../../components/dashboard/AnalyticsCharts";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
 import {
   FaArrowUp,
   FaArrowDown,
   FaWallet,
 } from "react-icons/fa";
 
+import AnalyticsCharts from "../../components/dashboard/AnalyticsCharts";
+
+import toast from "react-hot-toast";
+
+import API from "../../utils/api";
+
+import getUser from "../../utils/getUser";
+
 const Dashboard = () => {
 
-  const transactions = [
-    {
-      title: "Salary",
-      amount: "+ ₹50,000",
-      type: "income",
-    },
+  const user = getUser();
 
-    {
-      title: "Groceries",
-      amount: "- ₹2,500",
-      type: "expense",
-    },
+ const [dashboardData, setDashboardData] =
+  useState({
+    totalBalance: 0,
+    totalIncome: 0,
+    totalExpense: 0,
+    recentTransactions: [],
+    pieChartData: [],
+    barChartData: [],
+  });
 
-    {
-      title: "Electricity Bill",
-      amount: "- ₹1,200",
-      type: "expense",
-    },
+  // FETCH DASHBOARD
+  const fetchDashboard = async () => {
 
-    {
-      title: "Freelance",
-      amount: "+ ₹10,000",
-      type: "income",
-    },
-  ];
+    try {
+
+      const { data } =
+        await API.get("/dashboard");
+
+      setDashboardData(data);
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to load dashboard"
+      );
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    fetchDashboard();
+
+  }, []);
 
   return (
     <section>
 
-      {/* TOP CARDS */}
+      {/* TOP */}
+      <div className="mb-8">
+
+        <h1 className="text-4xl font-bold text-[#0B132B]">
+
+          Hello, {user?.name} 👋
+
+        </h1>
+
+        <p className="mt-2 text-gray-500">
+
+          Welcome back to Finora Dashboard
+
+        </p>
+
+      </div>
+
+      {/* CARDS */}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        {/* CARD 1 */}
+        {/* BALANCE */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
           <div className="flex items-center justify-between">
@@ -52,7 +92,10 @@ const Dashboard = () => {
               </p>
 
               <h2 className="mt-3 text-4xl font-bold text-[#0B132B]">
-                ₹30,000
+
+                ₹
+                {dashboardData.totalBalance}
+
               </h2>
 
             </div>
@@ -67,7 +110,7 @@ const Dashboard = () => {
 
         </div>
 
-        {/* CARD 2 */}
+        {/* INCOME */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
           <div className="flex items-center justify-between">
@@ -79,7 +122,10 @@ const Dashboard = () => {
               </p>
 
               <h2 className="mt-3 text-4xl font-bold text-green-600">
-                ₹50,000
+
+                ₹
+                {dashboardData.totalIncome}
+
               </h2>
 
             </div>
@@ -94,7 +140,7 @@ const Dashboard = () => {
 
         </div>
 
-        {/* CARD 3 */}
+        {/* EXPENSE */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
           <div className="flex items-center justify-between">
@@ -106,7 +152,10 @@ const Dashboard = () => {
               </p>
 
               <h2 className="mt-3 text-4xl font-bold text-red-500">
-                ₹20,000
+
+                ₹
+                {dashboardData.totalExpense}
+
               </h2>
 
             </div>
@@ -123,82 +172,90 @@ const Dashboard = () => {
 
       </div>
 
-      {/* BOTTOM SECTION */}
-      <div className="grid xl:grid-cols-3 gap-6 mt-6">
+      {/* TRANSACTIONS */}
+      <div className="mt-8 bg-white rounded-3xl shadow-sm p-6">
 
-        {/* ANALYTICS */}
-        <div className="xl:col-span-2 bg-white rounded-3xl p-6 shadow-sm">
+        <h2 className="text-2xl font-bold text-[#0B132B]">
 
-          <div className="flex items-center justify-between">
+          Recent Transactions
 
-            <h2 className="text-2xl font-bold text-[#0B132B]">
-              Analytics
-            </h2>
+        </h2>
 
-            <button className="text-blue-600">
-              View Report
-            </button>
+        <div className="mt-6 space-y-4">
 
-          </div>
+          {dashboardData.recentTransactions
+            .length === 0 ? (
 
-        <div className="mt-8">
+            <p className="text-gray-500">
 
-        <AnalyticsCharts />
+              No transactions found
 
-        </div>
+            </p>
 
-        </div>
+          ) : (
 
-        {/* TRANSACTIONS */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm">
+            dashboardData.recentTransactions.map(
+              (item, index) => (
 
-          <div className="flex items-center justify-between">
+                <div
+                  key={index}
+                  className="flex items-center justify-between bg-[#F5F7FF] p-4 rounded-2xl"
+                >
 
-            <h2 className="text-2xl font-bold text-[#0B132B]">
-              Recent Transactions
-            </h2>
+                  <div>
 
-          </div>
+                    <h3 className="font-semibold text-[#0B132B]">
 
-          {/* LIST */}
-          <div className="mt-8 space-y-5">
+                      {item.title}
 
-            {transactions.map((item, index) => (
+                    </h3>
 
-              <div
-                key={index}
-                className="flex items-center justify-between bg-[#F5F7FF] p-4 rounded-2xl"
-              >
+                    <p className="text-sm text-gray-500 mt-1">
 
-                <div>
+                      {item.type}
 
-                  <h3 className="font-semibold text-[#0B132B]">
-                    {item.title}
-                  </h3>
+                    </p>
 
-                  <p className="text-sm text-gray-500 mt-1">
-                    {item.type}
-                  </p>
+                  </div>
+
+                  <h2
+                    className={`font-bold text-lg ${
+                      item.type === "income"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
+
+                    {item.type === "income"
+                      ? "+"
+                      : "-"}
+
+                    ₹{item.amount}
+
+                  </h2>
 
                 </div>
 
-                <h2
-                  className={`font-bold text-lg ${
-                    item.type === "income"
-                      ? "text-green-600"
-                      : "text-red-500"
-                  }`}
-                >
-                  {item.amount}
-                </h2>
+              )
+            )
 
-              </div>
-
-            ))}
-
-          </div>
+          )}
 
         </div>
+
+        {/* CHARTS */}
+      <div className="mt-8">
+
+      <AnalyticsCharts
+        pieChartData={
+        dashboardData.pieChartData
+        }
+        barChartData={
+         dashboardData.barChartData
+      }
+      />
+
+</div>
 
       </div>
 
