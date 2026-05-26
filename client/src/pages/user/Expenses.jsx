@@ -67,15 +67,39 @@ const Expenses = () => {
         amount,
         date,
       });
+toast.success(
+  "Expense Added"
+);
 
-      toast.success(
-        "Expense Added"
-      );
+setShowModal(false);
 
-      setShowModal(false);
+fetchExpenses();
 
-      fetchExpenses();
+// UPDATE NOTIFICATIONS LIVE
+const userInfo = JSON.parse(
+  localStorage.getItem(
+    "userInfo"
+  )
+);
 
+userInfo.notifications.unshift({
+  message:
+    `Expense added: ₹${amount} for ${title}`,
+  read: false,
+  createdAt: new Date(),
+});
+
+localStorage.setItem(
+  "userInfo",
+  JSON.stringify(userInfo)
+);
+
+// UPDATE RED DOT
+window.dispatchEvent(
+  new Event(
+    "notificationUpdate"
+  )
+);
       setTitle("");
       setCategory("");
       setAmount("");

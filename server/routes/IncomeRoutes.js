@@ -1,18 +1,18 @@
 import express from "express";
 
+import protect from "../middleware/authMiddleware.js";
+
 import {
   addIncome,
-  getIncomes,
+  getIncome,
   deleteIncome,
 } from "../controllers/IncomeController.js";
-
-import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.route("/")
   .post(protect, addIncome)
-  .get(protect, getIncomes);
+  .get(protect, getIncome);
 
 router.route("/:id")
   .delete(protect, deleteIncome);

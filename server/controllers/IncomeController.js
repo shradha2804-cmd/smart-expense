@@ -12,17 +12,19 @@ export const addIncome = async (
   try {
 
     const {
-      source,
-      amount,
-      date,
-    } = req.body;
+  source,
+  category,
+  amount,
+  date,
+} = req.body;
 
     // VALIDATION
     if (
-      !source ||
-      !amount ||
-      !date
-    ) {
+  !source ||
+  !category ||
+  !amount ||
+  !date
+) {
 
       return res.status(400).json({
         message:
@@ -32,13 +34,14 @@ export const addIncome = async (
     }
 
     // CREATE INCOME
-    const income =
-      await Income.create({
-        user: req.user._id,
-        source,
-        amount,
-        date,
-      });
+   const income =
+  await Income.create({
+    user: req.user._id,
+    source,
+    category,
+    amount,
+    date,
+  });
 
     // NOTIFICATION
     const user =

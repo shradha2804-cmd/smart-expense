@@ -65,9 +65,35 @@ const Income = () => {
 
       toast.success("Income Added");
 
-      setShowModal(false);
+setShowModal(false);
 
-      fetchIncome();
+fetchIncome();
+
+// UPDATE NOTIFICATIONS LIVE
+const userInfo = JSON.parse(
+  localStorage.getItem(
+    "userInfo"
+  )
+);
+
+userInfo.notifications.unshift({
+  message:
+    `Income added: ₹${amount} from ${source}`,
+  read: false,
+  createdAt: new Date(),
+});
+
+localStorage.setItem(
+  "userInfo",
+  JSON.stringify(userInfo)
+);
+
+// UPDATE RED DOT
+window.dispatchEvent(
+  new Event(
+    "notificationUpdate"
+  )
+);
 
       setSource("");
       setCategory("");
