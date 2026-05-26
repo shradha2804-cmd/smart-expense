@@ -13,6 +13,7 @@ export const registerUser = async (req, res) => {
     const {
       name,
       email,
+      phone,
       password,
     } = req.body;
 
@@ -34,16 +35,20 @@ export const registerUser = async (req, res) => {
     const user = await User.create({
       name,
       email,
+      phone,
       password: hashedPassword,
     });
 
     // RESPONSE
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  profileImage: user.profileImage,
+  notifications: user.notifications,
+  token: generateToken(user._id),
+});
 
   } catch (error) {
 
@@ -74,12 +79,15 @@ export const loginUser = async (req, res) => {
       (await bcrypt.compare(password, user.password))
     ) {
 
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id),
-      });
+    res.json({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  profileImage: user.profileImage,
+  notifications: user.notifications,
+  token: generateToken(user._id),
+});
 
     } else {
 

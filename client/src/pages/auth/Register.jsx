@@ -26,6 +26,9 @@ const [loading, setLoading] = useState(false);
 
 const navigate = useNavigate();
 
+const [phone, setPhone] =
+  useState("");
+
 const handleRegister = async (e) => {
 
   e.preventDefault();
@@ -39,6 +42,7 @@ const handleRegister = async (e) => {
       {
         name,
         email,
+        phone,
         password,
       }
     );
@@ -138,6 +142,27 @@ navigate("/login");
             />
 
           </div>
+
+          {/* PHONE */}
+<div>
+
+  <label className="block mb-2 text-sm font-medium text-gray-700">
+
+    Phone Number
+
+  </label>
+
+  <input
+    type="text"
+    placeholder="Enter phone number"
+    value={phone}
+    onChange={(e) =>
+      setPhone(e.target.value)
+    }
+    className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+  />
+
+</div>
 
           {/* PASSWORD */}
           <div>

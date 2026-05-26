@@ -74,6 +74,10 @@ export const updateUserProfile = async (
     user.phone =
       req.body.phone || user.phone;
 
+    user.profileImage =
+        req.body.profileImage ||
+        user.profileImage;
+
     // CHANGE PASSWORD
     if (
       req.body.currentPassword &&
@@ -114,18 +118,19 @@ export const updateUserProfile = async (
 
     const updatedUser =
       await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-      notifications:
-        updatedUser.notifications,
-      token: generateToken(
-        updatedUser._id
-      ),
-    });
+res.json({
+  _id: updatedUser._id,
+  name: updatedUser.name,
+  email: updatedUser.email,
+  phone: updatedUser.phone,
+  profileImage:
+    updatedUser.profileImage,
+  notifications:
+    updatedUser.notifications,
+  token: generateToken(
+    updatedUser._id
+  ),
+});
 
   } catch (error) {
 

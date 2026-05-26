@@ -23,9 +23,15 @@ const userSchema = mongoose.Schema(
       default: "",
     },
 
+    profileImage: {
+      type: String,
+      default: "",
+    },
+
     notifications: [
       {
         message: String,
+
         createdAt: {
           type: Date,
           default: Date.now,
