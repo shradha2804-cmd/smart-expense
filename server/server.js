@@ -18,6 +18,10 @@ import dashboardRoutes from "./routes/DashboardRoutes.js";
 
 import userRoutes from "./routes/UserRoutes.js";
 
+import adminRoutes from "./routes/AdminRoutes.js";
+
+import notificationRoutes from "./routes/NotificationRoutes.js";
+
 dotenv.config();
 
 connectDB();
@@ -66,7 +70,17 @@ app.use(
   userRoutes
 );
 
+//Admin Routes
 
+app.use(
+  "/api/admin",
+  adminRoutes
+);
+
+app.use(
+  "/api/notifications",
+  notificationRoutes
+);
 // HOME ROUTE
 app.get("/", (req, res) => {
 

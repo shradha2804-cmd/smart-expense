@@ -1,23 +1,50 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL:
+    "http://localhost:5000/api",
 });
 
-API.interceptors.request.use((req) => {
 
-  const userInfo =
-    localStorage.getItem("userInfo");
+// REQUEST INTERCEPTOR
+API.interceptors.request.use(
+  (req) => {
 
-  if (userInfo) {
+    // USER TOKEN
+    const userInfo =
+      JSON.parse(
+        localStorage.getItem(
+          "userInfo"
+        )
+      );
 
-    req.headers.Authorization =
-      `Bearer ${JSON.parse(userInfo).token}`;
+    // ADMIN TOKEN
+    const adminInfo =
+      JSON.parse(
+        localStorage.getItem(
+          "adminInfo"
+        )
+      );
+
+    // SEND USER TOKEN
+    if (userInfo?.token) {
+
+      req.headers.Authorization =
+        `Bearer ${userInfo.token}`;
+
+    }
+
+    // SEND ADMIN TOKEN
+    if (adminInfo?.token) {
+
+      req.headers.Authorization =
+        `Bearer ${adminInfo.token}`;
+
+    }
+
+    return req;
 
   }
-
-  return req;
-
-});
+);
 
 export default API;

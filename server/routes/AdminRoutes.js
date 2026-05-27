@@ -11,18 +11,24 @@ import {
 const router =
   express.Router();
 
+
+// DASHBOARD
 router.get(
   "/dashboard",
   protect,
   getAdminDashboard
 );
 
+
+// USERS
 router.get(
   "/users",
   protect,
   getUsers
 );
 
+
+// DELETE USER
 router.delete(
   "/users/:id",
   protect,

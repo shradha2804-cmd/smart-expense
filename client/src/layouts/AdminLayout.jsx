@@ -15,7 +15,7 @@ const AdminLayout = () => {
     useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F5F3FF] flex">
+    <div className="min-h-screen bg-[#F3F0FF]">
 
       {/* SIDEBAR */}
       <AdminSidebar
@@ -27,16 +27,18 @@ const AdminLayout = () => {
         }
       />
 
-      {/* CONTENT */}
-      <div className="flex-1 flex flex-col lg:ml-[280px]">
+      {/* MAIN */}
+      <div className="lg:ml-[280px] min-h-screen flex flex-col">
 
+        {/* NAVBAR */}
         <AdminNavbar
           setSidebarOpen={
             setSidebarOpen
           }
         />
 
-        <main className="p-4 md:p-8">
+        {/* PAGE */}
+        <main className="flex-1 p-5 md:p-8">
 
           <Outlet />
 

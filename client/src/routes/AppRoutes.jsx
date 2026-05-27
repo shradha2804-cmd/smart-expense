@@ -28,10 +28,11 @@ import Settings from "../pages/user/Settings";
 import Notifications from "../pages/user/Notifications";
 
 
-
+import Users from "../pages/admin/Users";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminProtectedRoute from "./AdminProtectedRoute";
+import AdminNotifications from "../pages/admin/AdminNotifications";
 
 const AppRoutes = () => {
   return (
@@ -95,6 +96,7 @@ const AppRoutes = () => {
           <Route element={<AdminProtectedRoute />}>
 
           <Route element={<AdminLayout />}>
+          <Route path="/admin/users" element={<Users />}/>
 
           <Route path="/admin/dashboard" element={<AdminDashboard />}/>
 

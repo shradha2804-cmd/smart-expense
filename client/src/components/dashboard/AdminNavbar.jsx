@@ -5,9 +5,16 @@ import {
   FaBell,
 } from "react-icons/fa";
 
+import {
+  useNavigate,
+} from "react-router-dom";
+
 const AdminNavbar = ({
   setSidebarOpen,
 }) => {
+
+  const navigate =
+    useNavigate();
 
   const adminInfo =
     JSON.parse(
@@ -17,7 +24,7 @@ const AdminNavbar = ({
     );
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30">
 
       {/* LEFT */}
       <div className="flex items-center gap-4">
@@ -26,7 +33,7 @@ const AdminNavbar = ({
           onClick={() =>
             setSidebarOpen(true)
           }
-          className="lg:hidden text-2xl text-[#2E1065]"
+          className="lg:hidden text-xl text-[#2E1065]"
         >
 
           <FaBars />
@@ -35,13 +42,13 @@ const AdminNavbar = ({
 
         <div>
 
-          <h1 className="text-2xl font-bold text-[#2E1065]">
+          <h1 className="text-xl md:text-2xl font-bold text-[#2E1065]">
 
             Admin Dashboard
 
           </h1>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-xs md:text-sm text-gray-500">
 
             Welcome back admin
 
@@ -52,23 +59,32 @@ const AdminNavbar = ({
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
 
         {/* NOTIFICATION */}
-        <button className="relative text-2xl text-gray-600">
+        <button
+          onClick={() =>
+            navigate(
+              "/admin/notifications"
+            )
+          }
+          className="relative text-xl text-gray-600"
+        >
 
           <FaBell />
 
-          <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+          <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full"></span>
 
         </button>
 
         {/* PROFILE */}
-        <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg uppercase">
+        <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase text-sm">
 
-          {adminInfo?.name?.charAt(
-            0
-          )}
+          {
+            adminInfo?.name?.charAt(
+              0
+            )
+          }
 
         </div>
 
