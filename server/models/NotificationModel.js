@@ -3,6 +3,15 @@ import mongoose from "mongoose";
 const notificationSchema =
   mongoose.Schema(
     {
+      user: {
+        type:
+          mongoose.Schema.Types.ObjectId,
+
+        ref: "User",
+
+        default: null,
+      },
+
       title: {
         type: String,
         required: true,
@@ -13,15 +22,19 @@ const notificationSchema =
         required: true,
       },
 
+      sender: {
+        type: String,
+        default: "system",
+      },
+
       isRead: {
         type: Boolean,
         default: false,
       },
+    },
 
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
+    {
+      timestamps: true,
     }
   );
 

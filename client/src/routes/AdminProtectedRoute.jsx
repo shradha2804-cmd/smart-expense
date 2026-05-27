@@ -5,18 +5,22 @@ import {
   Outlet,
 } from "react-router-dom";
 
-const AdminProtectedRoute = () => {
+const AdminProtectedRoute =
+  () => {
 
-  const adminInfo =
-    JSON.parse(
-      localStorage.getItem(
-        "adminInfo"
-      )
+    const adminInfo =
+      JSON.parse(
+        localStorage.getItem(
+          "adminInfo"
+        )
+      );
+
+    return adminInfo ? (
+      <Outlet />
+    ) : (
+      <Navigate to="/login" />
     );
 
-  return adminInfo?.isAdmin
-    ? <Outlet />
-    : <Navigate to="/login" />;
-};
+  };
 
 export default AdminProtectedRoute;

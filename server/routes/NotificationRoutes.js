@@ -6,23 +6,38 @@ import {
   getNotifications,
   createNotification,
   deleteNotification,
+  markAsRead,
 } from "../controllers/NotificationController.js";
 
 const router =
   express.Router();
 
+
+// GET
 router.get(
   "/",
   protect,
   getNotifications
 );
 
+
+// CREATE
 router.post(
   "/",
   protect,
   createNotification
 );
 
+
+// MARK READ
+router.put(
+  "/:id/read",
+  protect,
+  markAsRead
+);
+
+
+// DELETE
 router.delete(
   "/:id",
   protect,

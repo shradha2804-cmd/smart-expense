@@ -1,9 +1,30 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
 import ProtectedRoute from "./ProtectedRoute";
 
+import AdminProtectedRoute from "./AdminProtectedRoute";
+
+
+// GUEST LAYOUT
 import GuestLayout from "../layouts/GuestLayout";
 
+// AUTH LAYOUT
+import AuthLayout from "../layouts/AuthLayout";
+
+// USER LAYOUT
+import UserLayout from "../layouts/UserLayout";
+
+// ADMIN LAYOUT
+import AdminLayout from "../layouts/AdminLayout";
+
+
+// GUEST PAGES
 import Home from "../pages/guest/Home";
 import About from "../pages/guest/About";
 import Features from "../pages/guest/Features";
@@ -12,93 +33,180 @@ import Contact from "../pages/guest/Contact";
 import FAQ from "../pages/guest/FAQ";
 
 
-
-import AuthLayout from "../layouts/AuthLayout";
+// AUTH PAGES
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 
 
-
-import UserLayout from "../layouts/UserLayout";
+// USER PAGES
 import Dashboard from "../pages/user/Dashboard";
 import Expenses from "../pages/user/Expenses";
 import Income from "../pages/user/Income";
 import Settings from "../pages/user/Settings";
 import Notifications from "../pages/user/Notifications";
+import Analytics from "../pages/user/Analytics";
 
 
-import Users from "../pages/admin/Users";
-import AdminLayout from "../layouts/AdminLayout";
+// ADMIN PAGES
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import AdminProtectedRoute from "./AdminProtectedRoute";
+import Users from "../pages/admin/Users";
 import AdminNotifications from "../pages/admin/AdminNotifications";
+import AdminAnalytics from "../pages/admin/AdminAnalytics";
+
 
 const AppRoutes = () => {
+
   return (
+
     <BrowserRouter>
 
       <Routes>
 
-        {/* Guest Layout */}
-        <Route path="/" element={<GuestLayout />}>
-
-          <Route index element={<Home />} />
-
-          <Route path="about" element={<About />} />
-
-          <Route path="features" element={<Features />} />
-
-          <Route path="pricing" element={<Pricing />} />
-
-          <Route path="contact" element={<Contact />} />
-
-          <Route path="faq" element={<FAQ />} />
-
-        </Route>
-
-        {/* AUTH ROUTES */}
-        <Route path="/" element={<AuthLayout />}>
-
-        <Route path="login" element={<Login />} />
-
-  <     Route path="register" element={<Register />} />
-
-        <Route path="forgot-password" element={<ForgotPassword />} />
-
-        </Route>
-
-
-        {/* USER ROUTES */}
+        {/* ================= GUEST ================= */}
         <Route
-        path="/"
-        element={
-        <ProtectedRoute>
-        <UserLayout />
-        </ProtectedRoute>
-        }
->
+          path="/"
+          element={<GuestLayout />}
+        >
 
-        <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            index
+            element={<Home />}
+          />
 
-        <Route path="expenses" element={<Expenses />} />
+          <Route
+            path="about"
+            element={<About />}
+          />
 
-        <Route path="income" element={<Income />} />
+          <Route
+            path="features"
+            element={<Features />}
+          />
 
-        <Route path="settings" element={<Settings />} />
-        <Route path="/notifications" element={<Notifications />}
-/>
+          <Route
+            path="pricing"
+            element={<Pricing />}
+          />
+
+          <Route
+            path="contact"
+            element={<Contact />}
+          />
+
+          <Route
+            path="faq"
+            element={<FAQ />}
+          />
 
         </Route>
 
-     
-        {/* ADMIN */}
-          <Route element={<AdminProtectedRoute />}>
 
-          <Route element={<AdminLayout />}>
-          <Route path="/admin/users" element={<Users />}/>
+        {/* ================= AUTH ================= */}
+        <Route
+          path="/"
+          element={<AuthLayout />}
+        >
 
-          <Route path="/admin/dashboard" element={<AdminDashboard />}/>
+          <Route
+            path="login"
+            element={<Login />}
+          />
+
+          <Route
+            path="register"
+            element={<Register />}
+          />
+
+          <Route
+            path="forgot-password"
+            element={<ForgotPassword />}
+          />
+
+        </Route>
+
+
+        {/* ================= USER ================= */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+
+              <UserLayout />
+
+            </ProtectedRoute>
+          }
+        >
+
+          <Route
+            path="dashboard"
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="expenses"
+            element={<Expenses />}
+          />
+
+          <Route
+            path="income"
+            element={<Income />}
+          />
+
+          <Route
+            path="settings"
+            element={<Settings />}
+          />
+
+          <Route
+            path="notifications"
+            element={<Notifications />}
+          />
+
+          <Route
+            path="analytics"
+            element={<Analytics />}
+          />
+
+        </Route>
+
+
+        {/* ================= ADMIN ================= */}
+        <Route
+          element={
+            <AdminProtectedRoute />
+          }
+        >
+
+          <Route
+            element={<AdminLayout />}
+          >
+
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminDashboard />
+              }
+            />
+
+            <Route
+              path="/admin/users"
+              element={<Users />}
+            />
+
+            <Route
+              path="/admin/notifications"
+              element={
+                <AdminNotifications />
+              }
+            />
+
+            <Route
+              path="/admin/analytics"
+              element={
+                <AdminAnalytics />
+              }
+            />
 
           </Route>
 
@@ -107,7 +215,9 @@ const AppRoutes = () => {
       </Routes>
 
     </BrowserRouter>
+
   );
+
 };
 
 export default AppRoutes;

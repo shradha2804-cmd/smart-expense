@@ -3,12 +3,17 @@ import React, {
   useState,
 } from "react";
 
+import API from "../../utils/api";
+
+import toast from "react-hot-toast";
+
 import {
   FaBell,
   FaCheckCircle,
   FaWallet,
   FaMoneyBillWave,
   FaUserEdit,
+  FaUserShield,
 } from "react-icons/fa";
 
 const Notifications = () => {
@@ -17,64 +22,100 @@ const Notifications = () => {
     setNotifications] =
     useState([]);
 
+  const [loading,
+    setLoading] =
+    useState(true);
+
+  // FETCH NOTIFICATIONS
+  const fetchNotifications =
+    async () => {
+
+      try {
+
+        const { data } =
+          await API.get(
+            "/notifications"
+          );
+
+        setNotifications(
+          data
+        );
+
+      } catch (error) {
+
+        toast.error(
+          "Failed to load notifications"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
   useEffect(() => {
 
-    const user =
-      JSON.parse(
-        localStorage.getItem(
-          "userInfo"
-        )
-      );
-
-    setNotifications(
-      user?.notifications || []
-    );
+    fetchNotifications();
 
   }, []);
 
-  // READ
-  const markAsRead = (
-    index
-  ) => {
+  // MARK AS READ
+  const markAsRead =
+    async (id) => {
 
-    const updated =
-      [...notifications];
+      try {
 
-    updated[index].read = true;
+        await API.put(
+          `/notifications/${id}/read`
+        );
 
-    setNotifications(
-      updated
-    );
+        setNotifications(
+          notifications.map(
+            (item) =>
+              item._id === id
+                ? {
+                    ...item,
+                    isRead: true,
+                  }
+                : item
+          )
+        );
 
-    const user =
-      JSON.parse(
-        localStorage.getItem(
-          "userInfo"
-        )
-      );
+      } catch (error) {
 
-    user.notifications =
-      updated;
+        console.log(error);
 
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify(user)
-    );
+      }
 
-    window.dispatchEvent(
-      new Event(
-        "notificationUpdate"
-      )
-    );
-
-  };
+    };
 
   // ICON
-  const getIcon = (message) => {
+  const getIcon = (
+    message,
+    sender
+  ) => {
 
+    // ADMIN
+    if (
+      sender === "admin"
+    ) {
+
+      return (
+        <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
+
+          <FaUserShield />
+
+        </div>
+      );
+
+    }
+
+    // EXPENSE
     if (
       message
-        .toLowerCase()
+        ?.toLowerCase()
         .includes("expense")
     ) {
 
@@ -88,9 +129,10 @@ const Notifications = () => {
 
     }
 
+    // INCOME
     if (
       message
-        .toLowerCase()
+        ?.toLowerCase()
         .includes("income")
     ) {
 
@@ -104,9 +146,10 @@ const Notifications = () => {
 
     }
 
+    // PROFILE
     if (
       message
-        .toLowerCase()
+        ?.toLowerCase()
         .includes("profile")
     ) {
 
@@ -120,6 +163,7 @@ const Notifications = () => {
 
     }
 
+    // DEFAULT
     return (
       <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center text-2xl">
 
@@ -129,6 +173,18 @@ const Notifications = () => {
     );
 
   };
+
+  if (loading) {
+
+    return (
+      <div className="text-center py-20 text-xl font-bold text-[#0B132B]">
+
+        Loading...
+
+      </div>
+    );
+
+  }
 
   return (
     <section>
@@ -157,7 +213,7 @@ const Notifications = () => {
           {
             notifications.filter(
               (item) =>
-                !item.read
+                !item.isRead
             ).length
           }{" "}
           Unread
@@ -169,95 +225,121 @@ const Notifications = () => {
       {/* BODY */}
       <div className="mt-8 bg-white rounded-3xl shadow-sm p-6 md:p-8">
 
-        {notifications.length === 0 ? (
+        {
+          notifications.length === 0 ? (
 
-          <div className="flex flex-col items-center justify-center py-20">
+            <div className="flex flex-col items-center justify-center py-20">
 
-            <div className="h-24 w-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-4xl">
+              <div className="h-24 w-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-4xl">
 
-              <FaBell />
+                <FaBell />
+
+              </div>
+
+              <h2 className="mt-6 text-2xl font-bold text-[#0B132B]">
+
+                No Notifications
+
+              </h2>
 
             </div>
 
-            <h2 className="mt-6 text-2xl font-bold text-[#0B132B]">
+          ) : (
 
-              No Notifications
+            <div className="space-y-5">
 
-            </h2>
+              {
+                notifications.map(
+                  (
+                    item
+                  ) => (
 
-          </div>
+                    <div
+                      key={item._id}
+                      onClick={() =>
+                        markAsRead(
+                          item._id
+                        )
+                      }
+                      className={`flex items-start gap-5 border rounded-3xl p-5 transition cursor-pointer
+                      ${
+                        item.isRead
+                          ? "bg-gray-50 border-gray-100 opacity-70"
+                          : "bg-white border-blue-100 hover:bg-blue-50/40"
+                      }`}
+                    >
 
-        ) : (
+                      {getIcon(
+                        item.message,
+                        item.sender
+                      )}
 
-          <div className="space-y-5">
+                      <div className="flex-1">
 
-            {notifications.map(
-              (
-                item,
-                index
-              ) => (
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
 
-                <div
-                  key={index}
-                  onClick={() =>
-                    markAsRead(
-                      index
-                    )
-                  }
-                  className={`flex items-start gap-5 border rounded-3xl p-5 transition cursor-pointer
-                  ${
-                    item.read
-                      ? "bg-gray-50 border-gray-100 opacity-70"
-                      : "bg-white border-blue-100 hover:bg-blue-50/40"
-                  }`}
-                >
+                          <div>
 
-                  {getIcon(
-                    item.message
-                  )}
+                            <h3 className="text-lg font-semibold text-[#0B132B]">
 
-                  <div className="flex-1">
+                              {item.message}
 
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                            </h3>
 
-                      <h3 className="text-lg font-semibold text-[#0B132B]">
+                            {/* ADMIN */}
+                            {
+                              item.sender ===
+                                "admin" && (
 
-                        {item.message}
+                                <p className="mt-1 text-sm text-purple-600 font-medium">
 
-                      </h3>
+                                  Sent by Admin
 
-                      {!item.read && (
+                                </p>
 
-                        <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+                              )
+                            }
 
-                          <FaCheckCircle />
+                          </div>
 
-                          NEW
+                          {
+                            !item.isRead && (
+
+                              <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+
+                                <FaCheckCircle />
+
+                                NEW
+
+                              </div>
+
+                            )
+                          }
 
                         </div>
 
-                      )}
+                        <p className="mt-3 text-sm text-gray-500">
+
+                          {
+                            new Date(
+                              item.createdAt
+                            ).toLocaleString()
+                          }
+
+                        </p>
+
+                      </div>
 
                     </div>
 
-                    <p className="mt-3 text-sm text-gray-500">
+                  )
+                )
+              }
 
-                      {new Date(
-                        item.createdAt
-                      ).toLocaleString()}
+            </div>
 
-                    </p>
-
-                  </div>
-
-                </div>
-
-              )
-            )}
-
-          </div>
-
-        )}
+          )
+        }
 
       </div>
 

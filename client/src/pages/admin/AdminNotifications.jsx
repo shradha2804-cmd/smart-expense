@@ -8,146 +8,399 @@ import API from "../../utils/api";
 import toast from "react-hot-toast";
 
 import {
-  FaTrash,
   FaBell,
+  FaSearch,
 } from "react-icons/fa";
 
-const AdminNotifications =
-  () => {
+const AdminNotifications = () => {
 
-    const [title,
-      setTitle] =
-      useState("");
+  const [users,
+    setUsers] =
+    useState([]);
 
-    const [message,
-      setMessage] =
-      useState("");
+  const [filteredUsers,
+    setFilteredUsers] =
+    useState([]);
 
-    const [
-      notifications,
-      setNotifications,
-    ] = useState([]);
+  const [search,
+    setSearch] =
+    useState("");
 
-    // FETCH
-    const fetchNotifications =
-      async () => {
+  const [sendType,
+    setSendType] =
+    useState("all");
 
-        try {
+  const [selectedUser,
+    setSelectedUser] =
+    useState(null);
 
-          const { data } =
-            await API.get(
-              "/notifications"
-            );
+  const [title,
+    setTitle] =
+    useState("");
 
-          setNotifications(
-            data
+  const [message,
+    setMessage] =
+    useState("");
+
+  const [loading,
+    setLoading] =
+    useState(false);
+
+  // FETCH USERS
+  const fetchUsers =
+    async () => {
+
+      try {
+
+        const { data } =
+          await API.get(
+            "/admin/users"
           );
 
-        } catch (error) {
+        setUsers(data);
 
-          toast.error(
-            "Failed to load notifications"
-          );
+        setFilteredUsers(
+          data
+        );
 
-        }
+      } catch (error) {
 
-      };
+        console.log(error);
 
-    // CREATE
-    const submitHandler =
-      async (e) => {
+      }
 
-        e.preventDefault();
+    };
 
-        try {
+  useEffect(() => {
 
-          await API.post(
-            "/notifications",
-            {
-              title,
-              message,
-            }
-          );
+    fetchUsers();
 
-          toast.success(
-            "Notification sent"
-          );
+  }, []);
 
-          setTitle("");
+  // SEARCH USERS
+  useEffect(() => {
 
-          setMessage("");
+    const filtered =
+      users.filter(
+        (user) =>
+          user.name
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            ) ||
+          user.email
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            )
+      );
 
-          fetchNotifications();
+    setFilteredUsers(
+      filtered
+    );
 
-        } catch (error) {
+  }, [search, users]);
 
-          toast.error(
+  // SEND
+  const submitHandler =
+    async (e) => {
+
+      e.preventDefault();
+
+      // VALIDATION
+      if (
+        sendType ===
+          "specific" &&
+        !selectedUser
+      ) {
+
+        return toast.error(
+          "Please select user"
+        );
+
+      }
+
+      try {
+
+        setLoading(true);
+
+        await API.post(
+          "/notifications",
+          {
+            title,
+            message,
+            userId:
+              sendType ===
+              "specific"
+                ? selectedUser._id
+                : null,
+          }
+        );
+
+        toast.success(
+          "Notification sent"
+        );
+
+        setTitle("");
+
+        setMessage("");
+
+        setSearch("");
+
+        setSelectedUser(
+          null
+        );
+
+      } catch (error) {
+
+        toast.error(
+          error.response?.data
+            ?.message ||
             "Failed to send"
-          );
+        );
 
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+  return (
+    <section>
+
+      {/* TOP */}
+      <div>
+
+        <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+
+          Notifications
+
+        </h1>
+
+        <p className="mt-2 text-gray-500">
+
+          Send notifications to users
+
+        </p>
+
+      </div>
+
+      {/* FORM */}
+      <form
+        onSubmit={
+          submitHandler
         }
+        className="mt-8 bg-white rounded-3xl p-5 md:p-6 shadow-sm space-y-5"
+      >
 
-      };
-
-    // DELETE
-    const deleteHandler =
-      async (id) => {
-
-        try {
-
-          await API.delete(
-            `/notifications/${id}`
-          );
-
-          toast.success(
-            "Deleted"
-          );
-
-          fetchNotifications();
-
-        } catch (error) {
-
-          toast.error(
-            "Delete failed"
-          );
-
-        }
-
-      };
-
-    useEffect(() => {
-
-      fetchNotifications();
-
-    }, []);
-
-    return (
-      <section>
-
-        {/* TOP */}
+        {/* SEND TYPE */}
         <div>
 
-          <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
 
-            Notifications
+            Send To
 
-          </h1>
+          </label>
 
-          <p className="mt-2 text-gray-500">
+          <select
+            value={sendType}
+            onChange={(e) => {
 
-            Send notifications to users
+              setSendType(
+                e.target.value
+              );
 
-          </p>
+              setSelectedUser(
+                null
+              );
+
+              setSearch("");
+
+            }}
+            className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-purple-600"
+          >
+
+            <option value="all">
+
+              All Users
+
+            </option>
+
+            <option value="specific">
+
+              Specific User
+
+            </option>
+
+          </select>
 
         </div>
 
-        {/* FORM */}
-        <form
-          onSubmit={
-            submitHandler
-          }
-          className="mt-8 bg-white rounded-3xl p-6 shadow-sm space-y-5"
-        >
+        {/* SEARCH USER */}
+        {
+          sendType ===
+            "specific" && (
+
+            <div>
+
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+
+                Search User
+
+              </label>
+
+              {/* SEARCH */}
+              <div className="relative">
+
+                <input
+                  type="text"
+                  placeholder="Search user..."
+                  value={search}
+                  onChange={(e) =>
+                    setSearch(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-2xl pl-12 pr-4 py-3 outline-none focus:border-purple-600"
+                />
+
+                <FaSearch className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
+
+              </div>
+
+              {/* USERS LIST */}
+              <div className="mt-4 border border-gray-200 rounded-2xl overflow-hidden max-h-[250px] overflow-y-auto">
+
+                {
+                  filteredUsers
+                    .length === 0 ? (
+
+                    <div className="p-5 text-center text-gray-500">
+
+                      No users found
+
+                    </div>
+
+                  ) : (
+
+                    filteredUsers.map(
+                      (
+                        user
+                      ) => (
+
+                        <div
+                          key={
+                            user._id
+                          }
+                          onClick={() =>
+                            setSelectedUser(
+                              user
+                            )
+                          }
+                          className={`cursor-pointer px-4 py-3 flex items-center gap-4 border-b border-gray-100 hover:bg-purple-50 transition
+                          ${
+                            selectedUser?._id ===
+                            user._id
+                              ? "bg-purple-100"
+                              : ""
+                          }`}
+                        >
+
+                          {/* IMAGE */}
+                          {
+                            user.profileImage ? (
+
+                              <img
+                                src={
+                                  user.profileImage
+                                }
+                                alt=""
+                                className="h-12 w-12 rounded-full object-cover"
+                              />
+
+                            ) : (
+
+                              <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase">
+
+                                {
+                                  user.name?.charAt(
+                                    0
+                                  )
+                                }
+
+                              </div>
+
+                            )
+                          }
+
+                          {/* INFO */}
+                          <div>
+
+                            <h3 className="font-semibold text-[#2E1065]">
+
+                              {
+                                user.name
+                              }
+
+                            </h3>
+
+                            <p className="text-sm text-gray-500">
+
+                              {
+                                user.email
+                              }
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                      )
+                    )
+
+                  )
+                }
+
+              </div>
+
+              {/* SELECTED */}
+              {
+                selectedUser && (
+
+                  <div className="mt-4 bg-purple-100 text-purple-700 px-5 py-3 rounded-2xl">
+
+                    Selected User:
+                    {" "}
+
+                    <span className="font-bold">
+
+                      {
+                        selectedUser.name
+                      }
+
+                    </span>
+
+                  </div>
+
+                )
+              }
+
+            </div>
+
+          )
+        }
+
+        {/* TITLE */}
+        <div>
+
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+
+            Title
+
+          </label>
 
           <input
             type="text"
@@ -162,9 +415,20 @@ const AdminNotifications =
             required
           />
 
+        </div>
+
+        {/* MESSAGE */}
+        <div>
+
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+
+            Message
+
+          </label>
+
           <textarea
-            rows="4"
-            placeholder="Write notification message..."
+            rows="5"
+            placeholder="Write notification..."
             value={message}
             onChange={(e) =>
               setMessage(
@@ -175,87 +439,30 @@ const AdminNotifications =
             required
           ></textarea>
 
-          <button
-            type="submit"
-            className="bg-purple-600 text-white px-8 py-3 rounded-2xl hover:bg-purple-700 transition"
-          >
-
-            Send Notification
-
-          </button>
-
-        </form>
-
-        {/* LIST */}
-        <div className="mt-8 space-y-4">
-
-          {
-            notifications.map(
-              (
-                item
-              ) => (
-
-                <div
-                  key={
-                    item._id
-                  }
-                  className="bg-white rounded-3xl p-5 shadow-sm flex items-start justify-between gap-4"
-                >
-
-                  <div className="flex gap-4">
-
-                    <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
-
-                      <FaBell />
-
-                    </div>
-
-                    <div>
-
-                      <h2 className="text-lg font-bold text-[#2E1065]">
-
-                        {
-                          item.title
-                        }
-
-                      </h2>
-
-                      <p className="mt-1 text-gray-500">
-
-                        {
-                          item.message
-                        }
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      deleteHandler(
-                        item._id
-                      )
-                    }
-                    className="h-11 w-11 rounded-xl bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center"
-                  >
-
-                    <FaTrash />
-
-                  </button>
-
-                </div>
-
-              )
-            )
-          }
-
         </div>
 
-      </section>
-    );
+        {/* BUTTON */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-purple-600 hover:bg-purple-700 transition text-white px-8 py-3 rounded-2xl flex items-center gap-3 disabled:opacity-70"
+        >
 
-  };
+          <FaBell />
 
-export default AdminNotifications;
+          {
+            loading
+              ? "Sending..."
+              : "Send Notification"
+          }
+
+        </button>
+
+      </form>
+
+    </section>
+  );
+};
+
+export default
+AdminNotifications;
