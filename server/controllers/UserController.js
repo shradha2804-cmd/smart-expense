@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/UserModel.js";
 
+import Notification from "../models/NotificationModel.js";
+
 
 // TOKEN
 const generateToken = (id) => {
@@ -27,16 +29,18 @@ export const getUserProfile = async (
 
   try {
 
-    const user = await User.findById(
-      req.user._id
-    ).select("-password");
+    const user =
+      await User.findById(
+        req.user._id
+      ).select("-password");
 
     res.json(user);
 
   } catch (error) {
 
     res.status(500).json({
-      message: error.message,
+      message:
+        error.message,
     });
 
   }
@@ -52,24 +56,31 @@ export const updateUserProfile = async (
 
   try {
 
-    const user = await User.findById(
-      req.user._id
-    );
+    const user =
+      await User.findById(
+        req.user._id
+      );
 
     if (!user) {
 
-      return res.status(404).json({
-        message: "User not found",
-      });
+      return res
+        .status(404)
+        .json({
+          message:
+            "User not found",
+        });
 
     }
 
-    // UPDATE FIELDS
+    // UPDATE NAME
     user.name =
-      req.body.name || user.name;
+      req.body.name ||
+      user.name;
 
+    // UPDATE PHONE
     user.phone =
-      req.body.phone || user.phone;
+      req.body.phone ||
+      user.phone;
 
     // PROFILE IMAGE
     if (req.file) {
@@ -93,10 +104,12 @@ export const updateUserProfile = async (
 
       if (!isMatch) {
 
-        return res.status(400).json({
-          message:
-            "Current password incorrect",
-        });
+        return res
+          .status(400)
+          .json({
+            message:
+              "Current password incorrect",
+          });
 
       }
 
@@ -111,34 +124,57 @@ export const updateUserProfile = async (
 
     }
 
-    // NOTIFICATION
-    user.notifications.unshift({
-      message:
-        "Profile updated successfully",
-      read: false,
-    });
-
+    // SAVE USER
     const updatedUser =
       await user.save();
 
+    // CREATE NOTIFICATION
+    await Notification.create({
+
+      user:
+        updatedUser._id,
+
+      title:
+        "Profile Updated",
+
+      message:
+        "Your profile information was updated successfully",
+
+      sender:
+        "system",
+
+    });
+
+    // RESPONSE
     res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
+
+      _id:
+        updatedUser._id,
+
+      name:
+        updatedUser.name,
+
+      email:
+        updatedUser.email,
+
+      phone:
+        updatedUser.phone,
+
       profileImage:
         updatedUser.profileImage,
-      notifications:
-        updatedUser.notifications,
-      token: generateToken(
-        updatedUser._id
-      ),
+
+      token:
+        generateToken(
+          updatedUser._id
+        ),
+
     });
 
   } catch (error) {
 
     res.status(500).json({
-      message: error.message,
+      message:
+        error.message,
     });
 
   }

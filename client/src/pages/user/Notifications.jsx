@@ -71,7 +71,8 @@ const Notifications = () => {
           `/notifications/${id}/read`
         );
 
-        setNotifications(
+        // UPDATE UI
+        const updated =
           notifications.map(
             (item) =>
               item._id === id
@@ -80,6 +81,16 @@ const Notifications = () => {
                     isRead: true,
                   }
                 : item
+          );
+
+        setNotifications(
+          updated
+        );
+
+        // UPDATE RED DOT
+        window.dispatchEvent(
+          new Event(
+            "notificationUpdate"
           )
         );
 
@@ -103,7 +114,7 @@ const Notifications = () => {
     ) {
 
       return (
-        <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
+        <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl shrink-0">
 
           <FaUserShield />
 
@@ -120,7 +131,7 @@ const Notifications = () => {
     ) {
 
       return (
-        <div className="h-14 w-14 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-2xl">
+        <div className="h-14 w-14 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-2xl shrink-0">
 
           <FaWallet />
 
@@ -137,7 +148,7 @@ const Notifications = () => {
     ) {
 
       return (
-        <div className="h-14 w-14 rounded-2xl bg-green-100 text-green-500 flex items-center justify-center text-2xl">
+        <div className="h-14 w-14 rounded-2xl bg-green-100 text-green-500 flex items-center justify-center text-2xl shrink-0">
 
           <FaMoneyBillWave />
 
@@ -154,7 +165,7 @@ const Notifications = () => {
     ) {
 
       return (
-        <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-500 flex items-center justify-center text-2xl">
+        <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-500 flex items-center justify-center text-2xl shrink-0">
 
           <FaUserEdit />
 
@@ -165,7 +176,7 @@ const Notifications = () => {
 
     // DEFAULT
     return (
-      <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center text-2xl">
+      <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center text-2xl shrink-0">
 
         <FaBell />
 
@@ -187,20 +198,20 @@ const Notifications = () => {
   }
 
   return (
-    <section>
+    <section className="w-full overflow-hidden">
 
       {/* HEADER */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
         <div>
 
-          <h1 className="text-3xl font-bold text-[#0B132B]">
+          <h1 className="text-2xl md:text-3xl font-bold text-[#0B132B] break-words">
 
             Notifications
 
           </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-gray-500 text-sm md:text-base">
 
             Stay updated with your latest activities
 
@@ -208,7 +219,8 @@ const Notifications = () => {
 
         </div>
 
-        <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-semibold shadow-md">
+        {/* UNREAD */}
+        <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-semibold shadow-md w-fit">
 
           {
             notifications.filter(
@@ -223,7 +235,7 @@ const Notifications = () => {
       </div>
 
       {/* BODY */}
-      <div className="mt-8 bg-white rounded-3xl shadow-sm p-6 md:p-8">
+      <div className="mt-8 bg-white rounded-3xl shadow-sm p-4 md:p-8 overflow-hidden">
 
         {
           notifications.length === 0 ? (
@@ -261,7 +273,7 @@ const Notifications = () => {
                           item._id
                         )
                       }
-                      className={`flex items-start gap-5 border rounded-3xl p-5 transition cursor-pointer
+                      className={`w-full max-w-full flex flex-col sm:flex-row items-start gap-4 border rounded-3xl p-4 md:p-5 transition cursor-pointer overflow-hidden break-all
                       ${
                         item.isRead
                           ? "bg-gray-50 border-gray-100 opacity-70"
@@ -269,19 +281,20 @@ const Notifications = () => {
                       }`}
                     >
 
+                      {/* ICON */}
                       {getIcon(
                         item.message,
                         item.sender
                       )}
 
-                      <div className="flex-1">
+                      {/* CONTENT */}
+                      <div className="flex-1 w-full min-w-0 max-w-full overflow-hidden">
 
-                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
 
-                          <div>
+                          <div className="min-w-0 flex-1">
 
-                            <h3 className="text-lg font-semibold text-[#0B132B]">
-
+                            <h3 className="text-sm md:text-base font-semibold text-[#0B132B] leading-relaxed break-all whitespace-pre-wrap w-full overflow-hidden">
                               {item.message}
 
                             </h3>
@@ -302,10 +315,11 @@ const Notifications = () => {
 
                           </div>
 
+                          {/* NEW */}
                           {
                             !item.isRead && (
 
-                              <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+                              <div className="flex items-center gap-2 text-green-600 text-sm font-medium shrink-0">
 
                                 <FaCheckCircle />
 
@@ -318,7 +332,8 @@ const Notifications = () => {
 
                         </div>
 
-                        <p className="mt-3 text-sm text-gray-500">
+                        {/* DATE */}
+                        <p className="mt-3 text-xs md:text-sm text-gray-500 break-words">
 
                           {
                             new Date(

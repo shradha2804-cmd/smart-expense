@@ -1,153 +1,145 @@
 import Expense from "../models/ExpenseModel.js";
 
-import User from "../models/UserModel.js";
+import Notification from "../models/NotificationModel.js";
 
 
 // ADD EXPENSE
-export const addExpense = async (
-  req,
-  res
-) => {
+export const addExpense =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const {
-      title,
-      category,
-      amount,
-      date,
-    } = req.body;
-
-    // VALIDATION
-    if (
-      !title ||
-      !category ||
-      !amount ||
-      !date
-    ) {
-
-      return res.status(400).json({
-        message:
-          "Please fill all fields",
-      });
-
-    }
-
-    // CREATE EXPENSE
-    const expense =
-      await Expense.create({
-        user: req.user._id,
+      const {
         title,
         category,
         amount,
         date,
+      } = req.body;
+
+      // VALIDATION
+      if (
+        !title ||
+        !category ||
+        !amount ||
+        !date
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            message:
+              "Please fill all fields",
+          });
+
+      }
+
+      // CREATE EXPENSE
+      const expense =
+        await Expense.create({
+          user: req.user._id,
+          title,
+          category,
+          amount,
+          date,
+        });
+
+      // CREATE NOTIFICATION
+      await Notification.create({
+
+        user: req.user._id,
+
+        title:
+          "Expense Added",
+
+        message:
+          `New expense added: ₹${amount} for ${title}`,
+
+        sender:
+          "system",
+
       });
 
-    // NOTIFICATION
-    const user =
-      await User.findById(
-        req.user._id
+      res.status(201).json(
+        expense
       );
 
-    user.notifications.unshift({
-      message:
-        `Expense added: ₹${amount} for ${title}`,
-      read: false,
-    });
+    } catch (error) {
 
-    await user.save();
+      res.status(500).json({
+        message:
+          error.message,
+      });
 
-    res.status(201).json(
-      expense
-    );
+    }
 
-  } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
-  }
-
-};
+  };
 
 
 // GET EXPENSES
-export const getExpenses = async (
-  req,
-  res
-) => {
+export const getExpenses =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const expenses =
-      await Expense.find({
-        user: req.user._id,
-      }).sort({
-        createdAt: -1,
+      const expenses =
+        await Expense.find({
+          user: req.user._id,
+        }).sort({
+          createdAt: -1,
+        });
+
+      res.json(
+        expenses
+      );
+
+    } catch (error) {
+
+      res.status(500).json({
+        message:
+          error.message,
       });
 
-    res.json(expenses);
+    }
 
-  } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
-  }
-
-};
+  };
 
 
 // DELETE EXPENSE
-export const deleteExpense = async (
-  req,
-  res
-) => {
+export const deleteExpense =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const expense =
-      await Expense.findById(
-        req.params.id
-      );
+      const expense =
+        await Expense.findById(
+          req.params.id
+        );
 
-    if (!expense) {
+      if (!expense) {
 
-      return res.status(404).json({
+        return res
+          .status(404)
+          .json({
+            message:
+              "Expense not found",
+          });
+
+      }
+
+      await expense.deleteOne();
+
+      res.json({
         message:
-          "Expense not found",
+          "Expense deleted",
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        message:
+          error.message,
       });
 
     }
 
-    // SECURITY CHECK
-    if (
-      expense.user.toString() !==
-      req.user._id.toString()
-    ) {
-
-      return res.status(401).json({
-        message:
-          "Not authorized",
-      });
-
-    }
-
-    await expense.deleteOne();
-
-    res.json({
-      message:
-        "Expense deleted",
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
-  }
-
-};
+  };

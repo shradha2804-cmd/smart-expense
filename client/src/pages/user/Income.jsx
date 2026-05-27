@@ -14,34 +14,52 @@ import API from "../../utils/api";
 
 const Income = () => {
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal,
+    setShowModal] =
+    useState(false);
 
-  const [incomes, setIncomes] = useState([]);
+  const [incomes,
+    setIncomes] =
+    useState([]);
 
-  const [source, setSource] = useState("");
+  const [source,
+    setSource] =
+    useState("");
 
-  const [category, setCategory] = useState("");
+  const [category,
+    setCategory] =
+    useState("");
 
-  const [amount, setAmount] = useState("");
+  const [amount,
+    setAmount] =
+    useState("");
 
-  const [date, setDate] = useState("");
+  const [date,
+    setDate] =
+    useState("");
 
   // FETCH
-  const fetchIncome = async () => {
+  const fetchIncome =
+    async () => {
 
-    try {
+      try {
 
-      const { data } = await API.get("/income");
+        const { data } =
+          await API.get(
+            "/income"
+          );
 
-      setIncomes(data);
+        setIncomes(data);
 
-    } catch (error) {
+      } catch (error) {
 
-      toast.error("Failed to load income");
+        toast.error(
+          "Failed to load income"
+        );
 
-    }
+      }
 
-  };
+    };
 
   useEffect(() => {
 
@@ -50,82 +68,77 @@ const Income = () => {
   }, []);
 
   // ADD
-  const handleAddIncome = async (e) => {
+  const handleAddIncome =
+    async (e) => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    try {
+      try {
 
-      await API.post("/income", {
-        source,
-        category,
-        amount,
-        date,
-      });
+        await API.post(
+          "/income",
+          {
+            source,
+            category,
+            amount,
+            date,
+          }
+        );
 
-      toast.success("Income Added");
+        toast.success(
+          "Income Added"
+        );
 
-setShowModal(false);
+        setShowModal(false);
 
-fetchIncome();
+        fetchIncome();
 
-// UPDATE NOTIFICATIONS LIVE
-const userInfo = JSON.parse(
-  localStorage.getItem(
-    "userInfo"
-  )
-);
+        // RESET
+        setSource("");
 
-userInfo.notifications.unshift({
-  message:
-    `Income added: ₹${amount} from ${source}`,
-  read: false,
-  createdAt: new Date(),
-});
+        setCategory("");
 
-localStorage.setItem(
-  "userInfo",
-  JSON.stringify(userInfo)
-);
+        setAmount("");
 
-// UPDATE RED DOT
-window.dispatchEvent(
-  new Event(
-    "notificationUpdate"
-  )
-);
+        setDate("");
 
-      setSource("");
-      setCategory("");
-      setAmount("");
-      setDate("");
+      } catch (error) {
 
-    } catch (error) {
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to add income"
+        );
 
-      toast.error("Failed to add income");
+      }
 
-    }
-
-  };
+    };
 
   // DELETE
-  const handleDelete = async (id) => {
+  const handleDelete =
+    async (id) => {
 
-    try {
+      try {
 
-      await API.delete(`/income/${id}`);
+        await API.delete(
+          `/income/${id}`
+        );
 
-      toast.success("Income Deleted");
+        toast.success(
+          "Income Deleted"
+        );
 
-      fetchIncome();
+        fetchIncome();
 
-    } catch (error) {
+      } catch (error) {
 
-      toast.error("Failed to delete income");
+        toast.error(
+          "Failed to delete income"
+        );
 
-    }
+      }
 
-  };
+    };
 
   return (
     <section>
@@ -136,17 +149,23 @@ window.dispatchEvent(
         <div>
 
           <h1 className="text-3xl font-bold text-[#0B132B]">
+
             Income
+
           </h1>
 
           <p className="mt-2 text-gray-500">
+
             Manage and track all your income.
+
           </p>
 
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() =>
+            setShowModal(true)
+          }
           className="bg-green-600 text-white px-6 py-3 rounded-2xl flex items-center gap-3 hover:bg-green-700 transition w-fit"
         >
 
@@ -164,166 +183,200 @@ window.dispatchEvent(
         <div className="hidden md:grid grid-cols-5 bg-[#F5F7FF] p-5 font-semibold text-[#0B132B]">
 
           <h3>Source</h3>
+
           <h3>Category</h3>
+
           <h3>Amount</h3>
+
           <h3>Date</h3>
+
           <h3 className="text-center">
+
             Actions
+
           </h3>
 
         </div>
 
         <div>
 
-          {incomes.map((item) => (
+          {
+            incomes.map(
+              (item) => (
 
-            <div
-              key={item._id}
-              className="grid md:grid-cols-5 gap-4 p-5 border-t border-gray-100 items-center"
-            >
-
-              <div>
-
-                <p className="font-semibold text-[#0B132B]">
-                  {item.source}
-                </p>
-
-              </div>
-
-              <div>
-
-                <p className="text-gray-500">
-                  {item.category}
-                </p>
-
-              </div>
-
-              <div>
-
-                <p className="font-bold text-green-600">
-                  ₹{item.amount}
-                </p>
-
-              </div>
-
-              <div>
-
-                <p className="text-gray-500">
-
-                  {new Date(
-                    item.date
-                  ).toLocaleDateString()}
-
-                </p>
-
-              </div>
-
-              <div className="flex justify-center">
-
-                <button
-                  onClick={() =>
-                    handleDelete(item._id)
-                  }
-                  className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"
+                <div
+                  key={item._id}
+                  className="grid md:grid-cols-5 gap-4 p-5 border-t border-gray-100 items-center"
                 >
 
-                  <FaTrash />
+                  <div>
 
-                </button>
+                    <p className="font-semibold text-[#0B132B]">
 
-              </div>
+                      {item.source}
 
-            </div>
+                    </p>
 
-          ))}
+                  </div>
+
+                  <div>
+
+                    <p className="text-gray-500">
+
+                      {item.category}
+
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="font-bold text-green-600">
+
+                      ₹{item.amount}
+
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="text-gray-500">
+
+                      {
+                        new Date(
+                          item.date
+                        ).toLocaleDateString()
+                      }
+
+                    </p>
+
+                  </div>
+
+                  <div className="flex justify-center">
+
+                    <button
+                      onClick={() =>
+                        handleDelete(
+                          item._id
+                        )
+                      }
+                      className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"
+                    >
+
+                      <FaTrash />
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              )
+            )
+          }
 
         </div>
 
       </div>
 
       {/* MODAL */}
-      {showModal && (
+      {
+        showModal && (
 
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
 
-          <div className="bg-white rounded-[35px] p-6 md:p-8 w-full max-w-lg">
+            <div className="bg-white rounded-[35px] p-6 md:p-8 w-full max-w-lg">
 
-            <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
 
-              <h2 className="text-3xl font-bold text-[#0B132B]">
+                <h2 className="text-3xl font-bold text-[#0B132B]">
 
-                Add Income
+                  Add Income
 
-              </h2>
+                </h2>
 
-              <button
-                onClick={() =>
-                  setShowModal(false)
+                <button
+                  onClick={() =>
+                    setShowModal(false)
+                  }
+                  className="text-2xl text-gray-500"
+                >
+
+                  ×
+
+                </button>
+
+              </div>
+
+              <form
+                onSubmit={
+                  handleAddIncome
                 }
-                className="text-2xl text-gray-500"
+                className="mt-8 space-y-5"
               >
-                ×
-              </button>
+
+                <input
+                  type="text"
+                  placeholder="Income Source"
+                  value={source}
+                  onChange={(e) =>
+                    setSource(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Category"
+                  value={category}
+                  onChange={(e) =>
+                    setCategory(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                />
+
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={amount}
+                  onChange={(e) =>
+                    setAmount(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                />
+
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) =>
+                    setDate(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                />
+
+                <button className="w-full bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700 transition">
+
+                  Save Income
+
+                </button>
+
+              </form>
 
             </div>
 
-            <form
-              onSubmit={handleAddIncome}
-              className="mt-8 space-y-5"
-            >
-
-              <input
-                type="text"
-                placeholder="Income Source"
-                value={source}
-                onChange={(e) =>
-                  setSource(e.target.value)
-                }
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-              />
-
-              <input
-                type="text"
-                placeholder="Category"
-                value={category}
-                onChange={(e) =>
-                  setCategory(e.target.value)
-                }
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-              />
-
-              <input
-                type="number"
-                placeholder="Amount"
-                value={amount}
-                onChange={(e) =>
-                  setAmount(e.target.value)
-                }
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-              />
-
-              <input
-                type="date"
-                value={date}
-                onChange={(e) =>
-                  setDate(e.target.value)
-                }
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-              />
-
-              <button className="w-full bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700 transition">
-
-                Save Income
-
-              </button>
-
-            </form>
-
           </div>
 
-        </div>
-
-      )}
+        )
+      }
 
     </section>
   );
