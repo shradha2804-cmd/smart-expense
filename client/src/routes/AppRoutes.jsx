@@ -27,6 +27,12 @@ import Income from "../pages/user/Income";
 import Settings from "../pages/user/Settings";
 import Notifications from "../pages/user/Notifications";
 
+
+
+import AdminLayout from "../layouts/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminProtectedRoute from "./AdminProtectedRoute";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -81,6 +87,18 @@ const AppRoutes = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="/notifications" element={<Notifications />}
 />
+
+        </Route>
+
+     
+        {/* ADMIN */}
+          <Route element={<AdminProtectedRoute />}>
+
+          <Route element={<AdminLayout />}>
+
+          <Route path="/admin/dashboard" element={<AdminDashboard />}/>
+
+          </Route>
 
         </Route>
 

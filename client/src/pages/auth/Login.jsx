@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+} from "react";
 
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import toast from "react-hot-toast";
 
 import API from "../../utils/api";
+
 import {
   FaGoogle,
   FaEye,
@@ -14,61 +19,96 @@ import {
 
 const Login = () => {
 
- const [showPassword, setShowPassword] = useState(false);
+  const [showPassword,
+    setShowPassword] =
+    useState(false);
 
-const [email, setEmail] = useState("");
+  const [email,
+    setEmail] =
+    useState("");
 
-const [password, setPassword] = useState("");
+  const [password,
+    setPassword] =
+    useState("");
 
-const [loading, setLoading] = useState(false);
+  const [loading,
+    setLoading] =
+    useState(false);
 
-const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-const handleLogin = async (e) => {
+  // LOGIN
+  const handleLogin =
+    async (e) => {
 
-  e.preventDefault();
+      e.preventDefault();
 
-  try {
+      try {
 
-    setLoading(true);
+        setLoading(true);
 
-    const { data } = await API.post(
-      "/auth/login",
-      {
-        email,
-        password,
+        const { data } =
+          await API.post(
+            "/auth/login",
+            {
+              email,
+              password,
+            }
+          );
+
+        toast.success(
+          "Login Successful"
+        );
+
+        // ADMIN LOGIN
+        if (data.isAdmin) {
+
+          localStorage.setItem(
+            "adminInfo",
+            JSON.stringify(data)
+          );
+
+          navigate(
+            "/admin/dashboard"
+          );
+
+        } else {
+
+          // USER LOGIN
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify(data)
+          );
+
+          navigate(
+            "/dashboard"
+          );
+
+        }
+
+      } catch (error) {
+
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Something went wrong"
+        );
+
+      } finally {
+
+        setLoading(false);
+
       }
-    );
 
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify(data)
-    );
-
-    toast.success("Login Successful");
-
-    navigate("/dashboard");
-
-  } catch (error) {
-
-    toast.error(
-      error.response?.data?.message ||
-      "Something went wrong"
-    );
-
-  } finally {
-
-    setLoading(false);
-
-  }
-
-};
+    };
 
   return (
     <div className="w-full max-w-md mx-auto">
 
       <div className="bg-white rounded-[35px] shadow-xl p-5 md:p-8">
 
+        {/* TITLE */}
         <h2 className="text-2xl md:text-3xl font-bold text-[#0B132B]">
 
           Welcome Back
@@ -96,7 +136,9 @@ const handleLogin = async (e) => {
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
           <span className="text-gray-400 text-sm">
+
             OR
+
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
@@ -104,25 +146,31 @@ const handleLogin = async (e) => {
         </div>
 
         {/* FORM */}
-       <form
-  onSubmit={handleLogin}
-  className="space-y-5"
->
+        <form
+          onSubmit={handleLogin}
+          className="space-y-5"
+        >
 
           {/* EMAIL */}
           <div>
 
             <label className="block mb-2 text-sm font-medium text-gray-700">
+
               Email
+
             </label>
 
             <input
-  type="email"
-  placeholder="Enter your email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
-/>
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+            />
 
           </div>
 
@@ -130,26 +178,42 @@ const handleLogin = async (e) => {
           <div>
 
             <label className="block mb-2 text-sm font-medium text-gray-700">
+
               Password
+
             </label>
 
             <div className="relative">
 
-             <input
-  type={showPassword ? "text" : "password"}
-  placeholder="Enter your password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
-/>
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
+              />
 
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
                 className="absolute top-1/2 -translate-y-1/2 right-5 text-gray-500"
               >
 
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {showPassword
+                  ? <FaEyeSlash />
+                  : <FaEye />}
 
               </button>
 
@@ -164,20 +228,25 @@ const handleLogin = async (e) => {
               to="/forgot-password"
               className="text-blue-600 hover:underline text-sm"
             >
+
               Forgot Password?
+
             </Link>
 
           </div>
 
           {/* BUTTON */}
-     <button
-  type="submit"
-  className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition"
->
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition disabled:opacity-70"
+          >
 
-  {loading ? "Loading..." : "Login"}
+            {loading
+              ? "Loading..."
+              : "Login"}
 
-</button>
+          </button>
 
         </form>
 
@@ -190,7 +259,9 @@ const handleLogin = async (e) => {
             to="/register"
             className="text-blue-600 ml-2 font-medium"
           >
+
             Register
+
           </Link>
 
         </p>
