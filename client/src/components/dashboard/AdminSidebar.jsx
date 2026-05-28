@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
   FaTimes,
   FaShieldAlt,
+  FaEnvelope,
 } from "react-icons/fa";
 
 const AdminSidebar = ({
@@ -41,6 +42,7 @@ const AdminSidebar = ({
     };
 
   const links = [
+
     {
       name: "Dashboard",
       path:
@@ -63,6 +65,13 @@ const AdminSidebar = ({
     },
 
     {
+      name: "Messages",
+      path:
+        "/admin/messages",
+      icon: <FaEnvelope />,
+    },
+
+    {
       name: "Analytics",
       path:
         "/admin/analytics",
@@ -75,6 +84,7 @@ const AdminSidebar = ({
         "/admin/settings",
       icon: <FaCog />,
     },
+
   ];
 
   return (

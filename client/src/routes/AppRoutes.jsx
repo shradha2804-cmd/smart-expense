@@ -34,6 +34,7 @@ import FAQ from "../pages/guest/FAQ";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 // USER PAGES
 import Dashboard from "../pages/user/Dashboard";
@@ -49,6 +50,7 @@ import Users from "../pages/admin/Users";
 import AdminNotifications from "../pages/admin/AdminNotifications";
 import AdminAnalytics from "../pages/admin/AdminAnalytics";
 import AdminSettings from "../pages/admin/AdminSettings";
+import AdminMessages from "../pages/admin/AdminMessages";
 
 const AppRoutes = () => {
 
@@ -115,6 +117,11 @@ const AppRoutes = () => {
           <Route
             path="forgot-password"
             element={<ForgotPassword />}
+          />
+
+          <Route
+            path="reset-password/:token"
+            element={<ResetPassword />}
           />
 
         </Route>
@@ -204,6 +211,13 @@ const AppRoutes = () => {
               path="/admin/settings"
               element={
                 <AdminSettings />
+              }
+            />
+
+            <Route
+              path="/admin/messages"
+              element={
+                <AdminMessages />
               }
             />
 

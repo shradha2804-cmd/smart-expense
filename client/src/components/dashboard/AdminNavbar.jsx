@@ -25,6 +25,10 @@ const AdminNavbar = ({
     setAdminInfo] =
     useState(null);
 
+  const [unreadCount,
+    setUnreadCount] =
+    useState(0);
+
   // FETCH ADMIN PROFILE
   const fetchAdminProfile =
     async () => {
@@ -46,9 +50,40 @@ const AdminNavbar = ({
 
     };
 
+  // FETCH UNREAD CONTACT MESSAGES
+  const fetchUnreadMessages =
+    async () => {
+
+      try {
+
+        const { data } =
+          await API.get(
+            "/contact"
+          );
+
+        const unread =
+          data.filter(
+            (item) =>
+              !item.isRead
+          );
+
+        setUnreadCount(
+          unread.length
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
+
   useEffect(() => {
 
     fetchAdminProfile();
+
+    fetchUnreadMessages();
 
   }, []);
 
@@ -90,11 +125,11 @@ const AdminNavbar = ({
       {/* RIGHT */}
       <div className="flex items-center gap-4 shrink-0">
 
-        {/* NOTIFICATION */}
+        {/* CONTACT MESSAGES */}
         <button
           onClick={() =>
             navigate(
-              "/admin/notifications"
+              "/admin/messages"
             )
           }
           className="relative text-xl text-gray-600"
@@ -102,36 +137,52 @@ const AdminNavbar = ({
 
           <FaBell />
 
-          <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full"></span>
+          {
+            unreadCount > 0 && (
+
+              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full"></span>
+
+            )
+          }
 
         </button>
 
         {/* PROFILE */}
-        {
-          adminInfo?.profileImage ? (
+        <button
+          onClick={() =>
+            navigate(
+              "/admin/settings"
+            )
+          }
+        >
 
-            <img
-              src={
-                adminInfo.profileImage
-              }
-              alt=""
-              className="h-10 w-10 rounded-full object-cover border-2 border-purple-100"
-            />
+          {
+            adminInfo?.profileImage ? (
 
-          ) : (
+              <img
+                src={
+                  adminInfo.profileImage
+                }
+                alt=""
+                className="h-10 w-10 rounded-full object-cover border-2 border-purple-100"
+              />
 
-            <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase text-sm">
+            ) : (
 
-              {
-                adminInfo?.name?.charAt(
-                  0
-                )
-              }
+              <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase text-sm">
 
-            </div>
+                {
+                  adminInfo?.name?.charAt(
+                    0
+                  )
+                }
 
-          )
-        }
+              </div>
+
+            )
+          }
+
+        </button>
 
       </div>
 
