@@ -24,81 +24,149 @@ import notificationRoutes from "./routes/NotificationRoutes.js";
 
 dotenv.config();
 
+// CONNECT DATABASE
 connectDB();
 
 const app = express();
 
+// ================= MIDDLEWARES =================
 
-// MIDDLEWARES
-app.use(cors());
+// CORS
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
-app.use(express.json());
+// BODY PARSER
+app.use(
+  express.json()
+);
 
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
-// STATIC UPLOADS
+// ================= STATIC FILES =================
+
 app.use(
   "/uploads",
   express.static(
-    path.join(process.cwd(), "uploads")
+    path.join(
+      process.cwd(),
+      "uploads"
+    )
   )
 );
 
+// ================= ROUTES =================
 
-// ROUTES
+// AUTH
 app.use(
   "/api/auth",
   authRoutes
 );
 
+// EXPENSES
 app.use(
   "/api/expenses",
   expenseRoutes
 );
 
+// INCOME
 app.use(
   "/api/income",
   incomeRoutes
 );
 
+// DASHBOARD
 app.use(
   "/api/dashboard",
   dashboardRoutes
 );
 
+// USERS
 app.use(
   "/api/users",
   userRoutes
 );
 
-//Admin Routes
-
+// ADMIN
 app.use(
   "/api/admin",
   adminRoutes
 );
 
+// NOTIFICATIONS
 app.use(
   "/api/notifications",
   notificationRoutes
 );
-// HOME ROUTE
-app.get("/", (req, res) => {
 
-  res.send(
-    "Finora API Running..."
-  );
+// ================= HOME =================
 
-});
+app.get(
+  "/",
+  (req, res) => {
 
+    res.send(
+      "Finora API Running..."
+    );
 
-// SERVER
+  }
+);
+
+// ================= 404 HANDLER =================
+
+app.use(
+  (req, res) => {
+
+    res.status(404).json({
+      message:
+        "API Route Not Found",
+    });
+
+  }
+);
+
+// ================= ERROR HANDLER =================
+
+app.use(
+  (
+    err,
+    req,
+    res,
+    next
+  ) => {
+
+    console.error(err);
+
+    res.status(
+      err.status || 500
+    ).json({
+      message:
+        err.message ||
+        "Server Error",
+    });
+
+  }
+);
+
+// ================= SERVER =================
+
 const PORT =
   process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(
+  PORT,
+  () => {
 
-  console.log(
-    `Server running on port ${PORT}`
-  );
+    console.log(
+      `🚀 Finora Server Running on Port ${PORT}`
+    );
 
-});
+  }
+);

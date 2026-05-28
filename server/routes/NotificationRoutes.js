@@ -12,32 +12,52 @@ import {
 const router =
   express.Router();
 
+// ADMIN MIDDLEWARE
+const adminOnly =
+  (req, res, next) => {
 
-// GET
+    if (
+      req.user &&
+      req.user.isAdmin
+    ) {
+
+      next();
+
+    } else {
+
+      res.status(403).json({
+        message:
+          "Admin access only",
+      });
+
+    }
+
+  };
+
+// GET USER NOTIFICATIONS
 router.get(
   "/",
   protect,
   getNotifications
 );
 
-
-// CREATE
+// CREATE NOTIFICATION
+// ADMIN ONLY
 router.post(
   "/",
   protect,
+  adminOnly,
   createNotification
 );
 
-
-// MARK READ
+// MARK AS READ
 router.put(
   "/:id/read",
   protect,
   markAsRead
 );
 
-
-// DELETE
+// DELETE NOTIFICATION
 router.delete(
   "/:id",
   protect,

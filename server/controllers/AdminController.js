@@ -4,6 +4,7 @@ import Expense from "../models/ExpenseModel.js";
 
 import Income from "../models/IncomeModel.js";
 
+import Notification from "../models/NotificationModel.js";
 
 // ADMIN DASHBOARD
 export const getAdminDashboard =
@@ -13,7 +14,10 @@ export const getAdminDashboard =
 
       // USERS
       const users =
-        await User.find();
+        await User.find()
+          .sort({
+            createdAt: -1,
+          });
 
       // EXPENSES
       const expenses =
@@ -23,21 +27,28 @@ export const getAdminDashboard =
       const incomes =
         await Income.find();
 
-      // TOTALS
+      // ================= TOTALS =================
+
       const totalUsers =
         users.length;
 
       const totalExpenses =
         expenses.reduce(
           (acc, item) =>
-            acc + item.amount,
+            acc +
+            Number(
+              item.amount || 0
+            ),
           0
         );
 
       const totalIncome =
         incomes.reduce(
           (acc, item) =>
-            acc + item.amount,
+            acc +
+            Number(
+              item.amount || 0
+            ),
           0
         );
 
@@ -45,13 +56,13 @@ export const getAdminDashboard =
         expenses.length +
         incomes.length;
 
-      // RECENT USERS
-      const recentUsers =
-        users
-          .slice(-5)
-          .reverse();
+      // ================= RECENT USERS =================
 
-      // RECENT TRANSACTIONS
+      const recentUsers =
+        users.slice(0, 5);
+
+      // ================= RECENT TRANSACTIONS =================
+
       const recentExpenses =
         expenses.map(
           (item) => ({
@@ -96,13 +107,22 @@ export const getAdminDashboard =
           )
           .slice(0, 8);
 
+      // ================= RESPONSE =================
+
       res.json({
+
         totalUsers,
+
         totalIncome,
+
         totalExpenses,
+
         totalTransactions,
+
         recentUsers,
+
         recentTransactions,
+
       });
 
     } catch (error) {
@@ -116,7 +136,6 @@ export const getAdminDashboard =
 
   };
 
-
 // GET USERS
 export const getUsers =
   async (req, res) => {
@@ -125,7 +144,9 @@ export const getUsers =
 
       const users =
         await User.find()
-          .select("-password")
+          .select(
+            "-password"
+          )
           .sort({
             createdAt: -1,
           });
@@ -142,7 +163,6 @@ export const getUsers =
     }
 
   };
-
 
 // DELETE USER
 export const deleteUser =
@@ -166,11 +186,42 @@ export const deleteUser =
 
       }
 
+      // PREVENT ADMIN DELETE
+      if (
+        user.isAdmin
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            message:
+              "Admin account cannot be deleted",
+          });
+
+      }
+
+      // DELETE RELATED DATA
+      await Expense.deleteMany({
+        user:
+          user._id,
+      });
+
+      await Income.deleteMany({
+        user:
+          user._id,
+      });
+
+      await Notification.deleteMany({
+        user:
+          user._id,
+      });
+
+      // DELETE USER
       await user.deleteOne();
 
       res.json({
         message:
-          "User deleted",
+          "User deleted successfully",
       });
 
     } catch (error) {

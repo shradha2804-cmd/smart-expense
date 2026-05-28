@@ -2,162 +2,256 @@ import Expense from "../models/ExpenseModel.js";
 
 import Income from "../models/IncomeModel.js";
 
-export const getDashboardData = async (
-  req,
-  res
-) => {
+export const getDashboardData =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const expenses = await Expense.find({
-      user: req.user._id,
-    });
+      // FETCH DATA
+      const expenses =
+        await Expense.find({
+          user: req.user._id,
+        });
 
-    const incomes = await Income.find({
-      user: req.user._id,
-    });
+      const incomes =
+        await Income.find({
+          user: req.user._id,
+        });
 
-    // TOTALS
-    const totalExpense = expenses.reduce(
-      (acc, item) =>
-        acc + Number(item.amount),
-      0
-    );
+      // ================= TOTALS =================
 
-    const totalIncome = incomes.reduce(
-      (acc, item) =>
-        acc + Number(item.amount),
-      0
-    );
+      const totalExpense =
+        expenses.reduce(
+          (acc, item) =>
+            acc +
+            Number(
+              item.amount || 0
+            ),
+          0
+        );
 
-    const totalBalance =
-      totalIncome - totalExpense;
+      const totalIncome =
+        incomes.reduce(
+          (acc, item) =>
+            acc +
+            Number(
+              item.amount || 0
+            ),
+          0
+        );
 
-    // RECENT TRANSACTIONS
-    const recentExpenses = expenses.map(
-      (item) => ({
-        title: item.title,
-        amount: item.amount,
-        type: "expense",
-        createdAt: item.createdAt,
-      })
-    );
+      const totalBalance =
+        totalIncome -
+        totalExpense;
 
-    const recentIncome = incomes.map(
-      (item) => ({
-        title: item.source,
-        amount: item.amount,
-        type: "income",
-        createdAt: item.createdAt,
-      })
-    );
+      // ================= RECENT TRANSACTIONS =================
 
-    const recentTransactions = [
-      ...recentExpenses,
-      ...recentIncome,
-    ]
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt) -
-          new Date(a.createdAt)
-      )
-      .slice(0, 5);
+      const recentExpenses =
+        expenses.map(
+          (item) => ({
+            title:
+              item.title,
+            amount:
+              item.amount,
+            type:
+              "expense",
+            createdAt:
+              item.createdAt,
+          })
+        );
 
-    // PIE CHART DATA
-    const categoryMap = {};
+      const recentIncome =
+        incomes.map(
+          (item) => ({
+            title:
+              item.source,
+            amount:
+              item.amount,
+            type:
+              "income",
+            createdAt:
+              item.createdAt,
+          })
+        );
 
-    expenses.forEach((item) => {
+      const recentTransactions =
+        [
+          ...recentExpenses,
+          ...recentIncome,
+        ]
+          .sort(
+            (a, b) =>
+              new Date(
+                b.createdAt
+              ) -
+              new Date(
+                a.createdAt
+              )
+          )
+          .slice(0, 5);
 
-      if (categoryMap[item.category]) {
+      // ================= PIE CHART =================
 
-        categoryMap[item.category] +=
-          Number(item.amount);
+      const categoryMap =
+        {};
 
-      } else {
+      expenses.forEach(
+        (item) => {
 
-        categoryMap[item.category] =
-          Number(item.amount);
+          const category =
+            item.category ||
+            "Other";
 
-      }
+          if (
+            categoryMap[
+              category
+            ]
+          ) {
 
-    });
+            categoryMap[
+              category
+            ] += Number(
+              item.amount || 0
+            );
 
-    const pieChartData =
-      Object.keys(categoryMap).map(
-        (key) => ({
-          name: key,
-          value: categoryMap[key],
-        })
+          } else {
+
+            categoryMap[
+              category
+            ] = Number(
+              item.amount || 0
+            );
+
+          }
+
+        }
       );
 
-    // BAR CHART DATA
-    const monthlyMap = {};
+      const pieChartData =
+        Object.keys(
+          categoryMap
+        ).map((key) => ({
+          name: key,
+          value:
+            categoryMap[
+              key
+            ],
+        }));
 
-    incomes.forEach((item) => {
+      // ================= BAR CHART =================
 
-      const month = new Date(
-        item.date
-      ).toLocaleString("default", {
-        month: "short",
-      });
+      const monthlyMap =
+        {};
 
-      if (!monthlyMap[month]) {
+      // HELPER
+      const addMonthlyData =
+        (
+          items,
+          type
+        ) => {
 
-        monthlyMap[month] = {
-          month,
-          income: 0,
-          expense: 0,
+          items.forEach(
+            (item) => {
+
+              const date =
+                new Date(
+                  item.date
+                );
+
+              const month =
+                date.toLocaleString(
+                  "default",
+                  {
+                    month:
+                      "short",
+                  }
+                );
+
+              if (
+                !monthlyMap[
+                  month
+                ]
+              ) {
+
+                monthlyMap[
+                  month
+                ] = {
+                  month,
+                  income: 0,
+                  expense: 0,
+                  sortDate:
+                    new Date(
+                      date.getFullYear(),
+                      date.getMonth(),
+                      1
+                    ),
+                };
+
+              }
+
+              monthlyMap[
+                month
+              ][type] +=
+                Number(
+                  item.amount || 0
+                );
+
+            }
+          );
+
         };
 
-      }
+      addMonthlyData(
+        incomes,
+        "income"
+      );
 
-      monthlyMap[month].income +=
-        Number(item.amount);
+      addMonthlyData(
+        expenses,
+        "expense"
+      );
 
-    });
+      const barChartData =
+        Object.values(
+          monthlyMap
+        )
+          .sort(
+            (a, b) =>
+              a.sortDate -
+              b.sortDate
+          )
+          .map(
+            ({
+              sortDate,
+              ...rest
+            }) => rest
+          );
 
-    expenses.forEach((item) => {
+      // ================= RESPONSE =================
 
-      const month = new Date(
-        item.date
-      ).toLocaleString("default", {
-        month: "short",
+      res.json({
+
+        totalBalance,
+
+        totalIncome,
+
+        totalExpense,
+
+        recentTransactions,
+
+        pieChartData,
+
+        barChartData,
+
       });
 
-      if (!monthlyMap[month]) {
+    } catch (error) {
 
-        monthlyMap[month] = {
-          month,
-          income: 0,
-          expense: 0,
-        };
+      res.status(500).json({
+        message:
+          error.message,
+      });
 
-      }
+    }
 
-      monthlyMap[month].expense +=
-        Number(item.amount);
-
-    });
-
-    const barChartData =
-      Object.values(monthlyMap);
-
-    // FINAL RESPONSE
-    res.json({
-      totalBalance,
-      totalIncome,
-      totalExpense,
-      recentTransactions,
-      pieChartData,
-      barChartData,
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
-  }
-
-};
+  };

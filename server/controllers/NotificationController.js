@@ -2,7 +2,6 @@ import Notification from "../models/NotificationModel.js";
 
 import User from "../models/UserModel.js";
 
-
 // GET USER NOTIFICATIONS
 export const getNotifications =
   async (req, res) => {
@@ -39,7 +38,6 @@ export const getNotifications =
 
   };
 
-
 // ADMIN SEND NOTIFICATION
 export const createNotification =
   async (req, res) => {
@@ -52,6 +50,21 @@ export const createNotification =
         userId,
       } = req.body;
 
+      // VALIDATION
+      if (
+        !title ||
+        !message
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            message:
+              "Title and message are required",
+          });
+
+      }
+
       // SEND TO ALL USERS
       if (!userId) {
 
@@ -62,7 +75,7 @@ export const createNotification =
               message,
               user: null,
 
-              // ADMIN SENDER
+              // ADMIN
               sender: "admin",
             }
           );
@@ -75,7 +88,7 @@ export const createNotification =
 
       }
 
-      // SEND TO SPECIFIC USER
+      // FIND USER
       const user =
         await User.findById(
           userId
@@ -92,6 +105,7 @@ export const createNotification =
 
       }
 
+      // CREATE
       const notification =
         await Notification.create(
           {
@@ -99,7 +113,7 @@ export const createNotification =
             message,
             user: userId,
 
-            // ADMIN SENDER
+            // ADMIN
             sender: "admin",
           }
         );
@@ -119,7 +133,6 @@ export const createNotification =
 
   };
 
-
 // MARK AS READ
 export const markAsRead =
   async (req, res) => {
@@ -138,6 +151,22 @@ export const markAsRead =
           .json({
             message:
               "Notification not found",
+          });
+
+      }
+
+      // SECURITY CHECK
+      if (
+        notification.user &&
+        notification.user.toString() !==
+          req.user._id.toString()
+      ) {
+
+        return res
+          .status(403)
+          .json({
+            message:
+              "Access denied",
           });
 
       }
@@ -163,7 +192,6 @@ export const markAsRead =
 
   };
 
-
 // DELETE NOTIFICATION
 export const deleteNotification =
   async (req, res) => {
@@ -186,11 +214,27 @@ export const deleteNotification =
 
       }
 
+      // SECURITY CHECK
+      if (
+        notification.user &&
+        notification.user.toString() !==
+          req.user._id.toString()
+      ) {
+
+        return res
+          .status(403)
+          .json({
+            message:
+              "Access denied",
+          });
+
+      }
+
       await notification.deleteOne();
 
       res.json({
         message:
-          "Deleted",
+          "Deleted successfully",
       });
 
     } catch (error) {
