@@ -4,7 +4,7 @@ import axios from "axios";
 const BASE_URL =
   import.meta.env
     .VITE_API_URL ||
-  "http://localhost:5000/api";
+  "https://finora-backend-poht.onrender.com/api";
 
 // AXIOS INSTANCE
 const API = axios.create({
