@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema =
   mongoose.Schema(
+
     {
+
       name: {
         type: String,
         required: true,
@@ -36,11 +38,25 @@ const userSchema =
         type: Boolean,
         default: false,
       },
+
+      // RESET PASSWORD TOKEN
+      resetPasswordToken: {
+        type: String,
+        default: null,
+      },
+
+      // RESET PASSWORD EXPIRE
+      resetPasswordExpire: {
+        type: Date,
+        default: null,
+      },
+
     },
 
     {
       timestamps: true,
     }
+
   );
 
 const User =

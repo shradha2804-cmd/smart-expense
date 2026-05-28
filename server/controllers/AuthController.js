@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 
 import jwt from "jsonwebtoken";
 
+import crypto from "crypto";
+
 import User from "../models/UserModel.js";
 
 import sendEmail from "../utils/sendEmail.js";
@@ -109,8 +111,7 @@ export const registerUser =
             hashedPassword,
         });
 
-      // ================= SEND WELCOME EMAIL =================
-
+      // SEND WELCOME EMAIL
       try {
 
         await sendEmail({
@@ -121,79 +122,46 @@ export const registerUser =
             "Welcome to Finora 🎉",
 
           html: `
-          
-          <div style="font-family: Arial, sans-serif; background:#F5F7FF; padding:40px 20px;">
 
-            <div style="max-width:600px; margin:auto; background:white; border-radius:20px; overflow:hidden;">
+          <div style="font-family:Arial,sans-serif;padding:40px;background:#F5F7FF;">
 
-              <!-- HEADER -->
-              <div style="background:#2563EB; padding:40px; text-align:center;">
+            <div style="max-width:600px;margin:auto;background:white;border-radius:20px;overflow:hidden;">
 
-                <h1 style="color:white; margin:0; font-size:38px;">
+              <div style="background:#2563EB;padding:40px;text-align:center;">
+
+                <h1 style="color:white;margin:0;">
 
                   Finora
 
                 </h1>
 
-                <p style="color:#DBEAFE; margin-top:10px; font-size:16px;">
-
-                  Smart Expense Management Platform
-
-                </p>
-
               </div>
 
-              <!-- BODY -->
-              <div style="padding:40px; color:#0B132B;">
+              <div style="padding:40px;">
 
-                <h2 style="margin-top:0; font-size:28px;">
+                <h2>
 
-                  Welcome, ${name} 👋
+                  Welcome ${name} 👋
 
                 </h2>
 
-                <p style="font-size:16px; line-height:1.8; color:#4B5563;">
+                <p style="line-height:1.8;color:#555;">
 
-                  Thank you for joining <strong>Finora</strong>.
-
-                  Your account has been created successfully and you're now ready to manage your finances smarter and faster.
+                  Your Finora account has been created successfully.
 
                 </p>
 
-                <div style="margin:35px 0;">
-
-                  <div style="background:#F3F4F6; padding:20px; border-radius:14px;">
-
-                    <p style="margin:0 0 10px 0; font-weight:bold;">
-
-                      Your Registered Email
-
-                    </p>
-
-                    <p style="margin:0; color:#2563EB; font-size:16px;">
-
-                      ${email}
-
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <!-- BUTTON -->
-                <div style="text-align:center; margin-top:40px;">
+                <div style="text-align:center;margin-top:40px;">
 
                   <a
                     href="${process.env.CLIENT_URL}/login"
                     style="
                       background:#2563EB;
                       color:white;
-                      padding:16px 32px;
+                      padding:14px 28px;
+                      border-radius:10px;
                       text-decoration:none;
-                      border-radius:12px;
-                      display:inline-block;
                       font-weight:bold;
-                      font-size:16px;
                     "
                   >
 
@@ -202,42 +170,6 @@ export const registerUser =
                   </a>
 
                 </div>
-
-                <!-- FEATURES -->
-                <div style="margin-top:45px;">
-
-                  <h3 style="margin-bottom:20px;">
-
-                    What you can do with Finora
-
-                  </h3>
-
-                  <ul style="padding-left:20px; color:#4B5563; line-height:2;">
-
-                    <li>Track expenses & income</li>
-
-                    <li>View analytics dashboards</li>
-
-                    <li>Manage financial reports</li>
-
-                    <li>Receive smart notifications</li>
-
-                    <li>Monitor monthly spending</li>
-
-                  </ul>
-
-                </div>
-
-              </div>
-
-              <!-- FOOTER -->
-              <div style="background:#F9FAFB; padding:25px; text-align:center;">
-
-                <p style="margin:0; color:#6B7280; font-size:14px;">
-
-                  © 2026 Finora. All rights reserved.
-
-                </p>
 
               </div>
 
@@ -249,10 +181,6 @@ export const registerUser =
         });
 
       } catch (emailError) {
-
-        console.log(
-          "Welcome email failed:"
-        );
 
         console.log(
           emailError.message
@@ -278,8 +206,6 @@ export const registerUser =
 
     } catch (error) {
 
-      console.log(error);
-
       res.status(500).json({
         message:
           error.message,
@@ -300,7 +226,6 @@ export const loginUser =
         password,
       } = req.body;
 
-      // VALIDATION
       if (
         !email ||
         !password
@@ -313,13 +238,11 @@ export const loginUser =
 
       }
 
-      // FIND USER
       const user =
         await User.findOne({
           email,
         });
 
-      // CHECK PASSWORD
       if (
         user &&
         (
@@ -356,8 +279,6 @@ export const loginUser =
 
     } catch (error) {
 
-      console.log(error);
-
       res.status(500).json({
         message:
           error.message,
@@ -376,22 +297,12 @@ export const forgotPassword =
       const { email } =
         req.body;
 
-      if (!email) {
-
-        return res.status(400).json({
-          message:
-            "Email is required",
-        });
-
-      }
-
       const user =
         await User.findOne({
           email,
         });
 
-      // SECURITY:
-      // DON'T REVEAL USER EXISTENCE
+      // SECURITY
       if (!user) {
 
         return res.json({
@@ -401,18 +312,171 @@ export const forgotPassword =
 
       }
 
-      // FUTURE:
-      // EMAIL SERVICE INTEGRATION
-      // NODEMAILER / RESEND / SENDGRID
+      // GENERATE TOKEN
+      const resetToken =
+        crypto
+          .randomBytes(32)
+          .toString("hex");
 
-      return res.json({
+      // SAVE TOKEN
+      user.resetPasswordToken =
+        resetToken;
+
+      user.resetPasswordExpire =
+        Date.now() +
+        1000 * 60 * 15;
+
+      await user.save();
+
+      // RESET URL
+      const resetUrl =
+        `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+      // SEND EMAIL
+      await sendEmail({
+
+        to: user.email,
+
+        subject:
+          "Reset Your Finora Password 🔐",
+
+        html: `
+
+        <div style="font-family:Arial,sans-serif;padding:40px;background:#F5F7FF;">
+
+          <div style="max-width:600px;margin:auto;background:white;border-radius:20px;overflow:hidden;">
+
+            <div style="background:#2563EB;padding:40px;text-align:center;">
+
+              <h1 style="color:white;margin:0;">
+
+                Finora
+
+              </h1>
+
+            </div>
+
+            <div style="padding:40px;">
+
+              <h2>
+
+                Password Reset Request
+
+              </h2>
+
+              <p style="line-height:1.8;color:#555;">
+
+                Click the button below to reset your password.
+
+                This link will expire in 15 minutes.
+
+              </p>
+
+              <div style="text-align:center;margin-top:40px;">
+
+                <a
+                  href="${resetUrl}"
+                  style="
+                    background:#2563EB;
+                    color:white;
+                    padding:14px 28px;
+                    border-radius:10px;
+                    text-decoration:none;
+                    font-weight:bold;
+                  "
+                >
+
+                  Reset Password
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        `,
+
+      });
+
+      res.json({
         message:
-          "Password reset instructions sent successfully",
+          "Password reset email sent",
       });
 
     } catch (error) {
 
-      console.log(error);
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+
+  };
+
+// RESET PASSWORD
+export const resetPassword =
+  async (req, res) => {
+
+    try {
+
+      const { token } =
+        req.params;
+
+      const { password } =
+        req.body;
+
+      const user =
+        await User.findOne({
+
+          resetPasswordToken:
+            token,
+
+          resetPasswordExpire:
+            {
+              $gt: Date.now(),
+            },
+
+        });
+
+      if (!user) {
+
+        return res.status(400).json({
+          message:
+            "Invalid or expired token",
+        });
+
+      }
+
+      // HASH PASSWORD
+      const salt =
+        await bcrypt.genSalt(10);
+
+      user.password =
+        await bcrypt.hash(
+          password,
+          salt
+        );
+
+      // CLEAR TOKEN
+      user.resetPasswordToken =
+        null;
+
+      user.resetPasswordExpire =
+        null;
+
+      await user.save();
+
+      res.json({
+        message:
+          "Password reset successful",
+      });
+
+    } catch (error) {
 
       res.status(500).json({
         message:

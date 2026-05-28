@@ -1,18 +1,65 @@
-# dependencies
-node_modules
+# =========================
+# NODE MODULES
+# =========================
+node_modules/
 
-# environment variables
+# =========================
+# ENV FILES
+# =========================
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# build folders
-dist
-build
+# =========================
+# BUILD FILES
+# =========================
+dist/
+build/
 
-# logs
+# =========================
+# LOG FILES
+# =========================
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# vscode
-.vscode
-
-# system files
+# =========================
+# OS FILES
+# =========================
 .DS_Store
+Thumbs.db
+
+# =========================
+# VERCEL
+# =========================
+.vercel/
+
+# =========================
+# RENDER
+# =========================
+.render/
+
+# =========================
+# UPLOADS
+# =========================
+server/uploads/
+
+# =========================
+# IDE FILES
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# CACHE
+# =========================
+.cache/
+.temp/
+.tmp/
+
+# =========================
+# TEST COVERAGE
+# =========================
+coverage/

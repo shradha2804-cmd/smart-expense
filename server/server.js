@@ -24,6 +24,7 @@ import adminRoutes from "./routes/AdminRoutes.js";
 
 import notificationRoutes from "./routes/NotificationRoutes.js";
 
+import contactRoutes from "./routes/ContactRoutes.js";
 
 // CONNECT DATABASE
 connectDB();
@@ -107,6 +108,11 @@ app.use(
   notificationRoutes
 );
 
+// CONTACT MESSAGES
+app.use(
+  "/api/contact",
+  contactRoutes
+);
 
 // ================= HOME =================
 

@@ -1,9 +1,15 @@
 import express from "express";
 
 import {
+
   registerUser,
+
   loginUser,
+
   forgotPassword,
+
+  resetPassword,
+
 } from "../controllers/AuthController.js";
 
 const router =
@@ -25,6 +31,12 @@ router.post(
 router.post(
   "/forgot-password",
   forgotPassword
+);
+
+// RESET PASSWORD
+router.post(
+  "/reset-password/:token",
+  resetPassword
 );
 
 export default router;
