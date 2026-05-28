@@ -32,6 +32,8 @@ const Notifications = () => {
 
       try {
 
+        setLoading(true);
+
         const { data } =
           await API.get(
             "/notifications"
@@ -41,7 +43,7 @@ const Notifications = () => {
           data
         );
 
-        // UPDATE GLOBAL NOTIFICATION STATE
+        // UPDATE NAVBAR
         window.dispatchEvent(
           new Event(
             "notificationUpdate"
@@ -50,8 +52,30 @@ const Notifications = () => {
 
       } catch (error) {
 
+        console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          localStorage.removeItem(
+            "token"
+          );
+
+          localStorage.removeItem(
+            "isAdmin"
+          );
+
+          window.location.href =
+            "/login";
+
+        }
+
         toast.error(
-          "Failed to load notifications"
+          error.response?.data
+            ?.message ||
+            "Failed to load notifications"
         );
 
       } finally {
@@ -71,6 +95,10 @@ const Notifications = () => {
   // MARK AS READ
   const markAsRead =
     async (id) => {
+
+      // STORE OLD STATE
+      const oldNotifications =
+        [...notifications];
 
       try {
 
@@ -101,12 +129,18 @@ const Notifications = () => {
 
       } catch (error) {
 
-        console.log(
-          error
+        console.log(error);
+
+        // RESTORE IF FAILED
+        setNotifications(
+          oldNotifications
         );
 
-        // REFRESH BACK IF ERROR
-        fetchNotifications();
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to update notification"
+        );
 
       }
 
@@ -202,6 +236,7 @@ const Notifications = () => {
         !item.isRead
     ).length;
 
+  // LOADING
   if (loading) {
 
     return (

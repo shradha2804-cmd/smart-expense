@@ -1,8 +1,10 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import express from "express";
 
 import cors from "cors";
-
-import dotenv from "dotenv";
 
 import path from "path";
 
@@ -22,7 +24,6 @@ import adminRoutes from "./routes/AdminRoutes.js";
 
 import notificationRoutes from "./routes/NotificationRoutes.js";
 
-dotenv.config();
 
 // CONNECT DATABASE
 connectDB();
@@ -105,6 +106,7 @@ app.use(
   "/api/notifications",
   notificationRoutes
 );
+
 
 // ================= HOME =================
 

@@ -167,21 +167,28 @@ export const getDashboardData =
                   }
                 );
 
+              const year =
+                date.getFullYear();
+
+              const uniqueKey =
+                `${month}-${year}`;
+
               if (
                 !monthlyMap[
-                  month
+                  uniqueKey
                 ]
               ) {
 
                 monthlyMap[
-                  month
+                  uniqueKey
                 ] = {
                   month,
+                  year,
                   income: 0,
                   expense: 0,
                   sortDate:
                     new Date(
-                      date.getFullYear(),
+                      year,
                       date.getMonth(),
                       1
                     ),
@@ -190,7 +197,7 @@ export const getDashboardData =
               }
 
               monthlyMap[
-                month
+                uniqueKey
               ][type] +=
                 Number(
                   item.amount || 0
@@ -201,6 +208,7 @@ export const getDashboardData =
 
         };
 
+      // ADD DATA
       addMonthlyData(
         incomes,
         "income"
@@ -223,6 +231,7 @@ export const getDashboardData =
           .map(
             ({
               sortDate,
+              year,
               ...rest
             }) => rest
           );

@@ -24,11 +24,30 @@ const AdminDashboard = () => {
     setDashboardData] =
     useState(null);
 
-  // FETCH
+  // HANDLE AUTH ERROR
+  const handleAuthError =
+    () => {
+
+      localStorage.removeItem(
+        "token"
+      );
+
+      localStorage.removeItem(
+        "isAdmin"
+      );
+
+      window.location.href =
+        "/login";
+
+    };
+
+  // FETCH DASHBOARD
   const fetchDashboard =
     async () => {
 
       try {
+
+        setLoading(true);
 
         const { data } =
           await API.get(
@@ -41,8 +60,21 @@ const AdminDashboard = () => {
 
       } catch (error) {
 
+        console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
+
         toast.error(
-          "Failed to load dashboard"
+          error.response?.data
+            ?.message ||
+            "Failed to load dashboard"
         );
 
       } finally {
@@ -59,6 +91,7 @@ const AdminDashboard = () => {
 
   }, []);
 
+  // LOADING
   if (loading) {
 
     return (
@@ -94,7 +127,7 @@ const AdminDashboard = () => {
       {/* STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-8">
 
-        {/* CARD */}
+        {/* USERS */}
         <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
           <div className="flex items-center justify-between gap-4">
@@ -110,7 +143,7 @@ const AdminDashboard = () => {
               <h1 className="mt-2 text-3xl font-bold text-[#2E1065] break-words">
 
                 {
-                  dashboardData?.totalUsers
+                  dashboardData?.totalUsers || 0
                 }
 
               </h1>
@@ -143,7 +176,7 @@ const AdminDashboard = () => {
               <h1 className="mt-2 text-3xl font-bold text-green-600 break-words">
 
                 ₹{
-                  dashboardData?.totalIncome
+                  dashboardData?.totalIncome || 0
                 }
 
               </h1>
@@ -176,7 +209,7 @@ const AdminDashboard = () => {
               <h1 className="mt-2 text-3xl font-bold text-red-500 break-words">
 
                 ₹{
-                  dashboardData?.totalExpenses
+                  dashboardData?.totalExpenses || 0
                 }
 
               </h1>
@@ -209,7 +242,7 @@ const AdminDashboard = () => {
               <h1 className="mt-2 text-3xl font-bold text-blue-600 break-words">
 
                 {
-                  dashboardData?.totalTransactions
+                  dashboardData?.totalTransactions || 0
                 }
 
               </h1>

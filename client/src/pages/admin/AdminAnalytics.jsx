@@ -42,11 +42,30 @@ const AdminAnalytics =
       setMonthlyData] =
       useState([]);
 
+    // HANDLE AUTH ERROR
+    const handleAuthError =
+      () => {
+
+        localStorage.removeItem(
+          "token"
+        );
+
+        localStorage.removeItem(
+          "isAdmin"
+        );
+
+        window.location.href =
+          "/login";
+
+      };
+
     // FETCH ANALYTICS
     const fetchAnalytics =
       async () => {
 
         try {
+
+          setLoading(true);
 
           const { data } =
             await API.get(
@@ -81,8 +100,21 @@ const AdminAnalytics =
 
         } catch (error) {
 
+          console.log(error);
+
+          // TOKEN EXPIRED
+          if (
+            error.response?.status === 401
+          ) {
+
+            handleAuthError();
+
+          }
+
           toast.error(
-            "Failed to load analytics"
+            error.response?.data
+              ?.message ||
+              "Failed to load analytics"
           );
 
         } finally {
@@ -99,6 +131,7 @@ const AdminAnalytics =
 
     }, []);
 
+    // LOADING
     if (loading) {
 
       return (

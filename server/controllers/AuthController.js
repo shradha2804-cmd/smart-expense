@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/UserModel.js";
 
+import sendEmail from "../utils/sendEmail.js";
+
 // GENERATE TOKEN
 const generateToken = (id) => {
 
@@ -107,8 +109,160 @@ export const registerUser =
             hashedPassword,
         });
 
+      // ================= SEND WELCOME EMAIL =================
+
+      try {
+
+        await sendEmail({
+
+          to: email,
+
+          subject:
+            "Welcome to Finora 🎉",
+
+          html: `
+          
+          <div style="font-family: Arial, sans-serif; background:#F5F7FF; padding:40px 20px;">
+
+            <div style="max-width:600px; margin:auto; background:white; border-radius:20px; overflow:hidden;">
+
+              <!-- HEADER -->
+              <div style="background:#2563EB; padding:40px; text-align:center;">
+
+                <h1 style="color:white; margin:0; font-size:38px;">
+
+                  Finora
+
+                </h1>
+
+                <p style="color:#DBEAFE; margin-top:10px; font-size:16px;">
+
+                  Smart Expense Management Platform
+
+                </p>
+
+              </div>
+
+              <!-- BODY -->
+              <div style="padding:40px; color:#0B132B;">
+
+                <h2 style="margin-top:0; font-size:28px;">
+
+                  Welcome, ${name} 👋
+
+                </h2>
+
+                <p style="font-size:16px; line-height:1.8; color:#4B5563;">
+
+                  Thank you for joining <strong>Finora</strong>.
+
+                  Your account has been created successfully and you're now ready to manage your finances smarter and faster.
+
+                </p>
+
+                <div style="margin:35px 0;">
+
+                  <div style="background:#F3F4F6; padding:20px; border-radius:14px;">
+
+                    <p style="margin:0 0 10px 0; font-weight:bold;">
+
+                      Your Registered Email
+
+                    </p>
+
+                    <p style="margin:0; color:#2563EB; font-size:16px;">
+
+                      ${email}
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <!-- BUTTON -->
+                <div style="text-align:center; margin-top:40px;">
+
+                  <a
+                    href="${process.env.CLIENT_URL}/login"
+                    style="
+                      background:#2563EB;
+                      color:white;
+                      padding:16px 32px;
+                      text-decoration:none;
+                      border-radius:12px;
+                      display:inline-block;
+                      font-weight:bold;
+                      font-size:16px;
+                    "
+                  >
+
+                    Login to Finora
+
+                  </a>
+
+                </div>
+
+                <!-- FEATURES -->
+                <div style="margin-top:45px;">
+
+                  <h3 style="margin-bottom:20px;">
+
+                    What you can do with Finora
+
+                  </h3>
+
+                  <ul style="padding-left:20px; color:#4B5563; line-height:2;">
+
+                    <li>Track expenses & income</li>
+
+                    <li>View analytics dashboards</li>
+
+                    <li>Manage financial reports</li>
+
+                    <li>Receive smart notifications</li>
+
+                    <li>Monitor monthly spending</li>
+
+                  </ul>
+
+                </div>
+
+              </div>
+
+              <!-- FOOTER -->
+              <div style="background:#F9FAFB; padding:25px; text-align:center;">
+
+                <p style="margin:0; color:#6B7280; font-size:14px;">
+
+                  © 2026 Finora. All rights reserved.
+
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          `,
+        });
+
+      } catch (emailError) {
+
+        console.log(
+          "Welcome email failed:"
+        );
+
+        console.log(
+          emailError.message
+        );
+
+      }
+
       // RESPONSE
       res.status(201).json({
+
         message:
           "Registration successful",
 
@@ -119,6 +273,7 @@ export const registerUser =
 
         isAdmin:
           user.isAdmin,
+
       });
 
     } catch (error) {
@@ -176,6 +331,7 @@ export const loginUser =
       ) {
 
         res.json({
+
           message:
             "Login successful",
 
@@ -186,6 +342,7 @@ export const loginUser =
 
           isAdmin:
             user.isAdmin,
+
         });
 
       } else {

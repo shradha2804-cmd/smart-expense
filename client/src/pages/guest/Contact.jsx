@@ -1,4 +1,6 @@
-import React from "react";
+import React, {
+  useState,
+} from "react";
 
 import {
   FaEnvelope,
@@ -7,7 +9,81 @@ import {
   FaClock,
 } from "react-icons/fa";
 
+import toast from "react-hot-toast";
+
+import API from "../../utils/api";
+
 const Contact = () => {
+
+  const [name,
+    setName] =
+    useState("");
+
+  const [email,
+    setEmail] =
+    useState("");
+
+  const [subject,
+    setSubject] =
+    useState("");
+
+  const [message,
+    setMessage] =
+    useState("");
+
+  const [loading,
+    setLoading] =
+    useState(false);
+
+  // SEND MESSAGE
+  const handleSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      try {
+
+        setLoading(true);
+
+        await API.post(
+          "/contact",
+          {
+            name,
+            email,
+            subject,
+            message,
+          }
+        );
+
+        toast.success(
+          "Message sent successfully"
+        );
+
+        // RESET
+        setName("");
+
+        setEmail("");
+
+        setSubject("");
+
+        setMessage("");
+
+      } catch (error) {
+
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to send message"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
   return (
     <section className="bg-[#F5F7FF] overflow-hidden">
 
@@ -15,14 +91,19 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-20 text-center">
 
         <div className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm md:text-base">
+
           Contact Finora
+
         </div>
 
         <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold text-[#0B132B] leading-tight">
 
           Let’s Talk About
+
           <span className="block text-blue-600">
+
             Smart Finance
+
           </span>
 
         </h1>
@@ -46,17 +127,23 @@ const Contact = () => {
           <div className="bg-white rounded-3xl p-6 shadow-sm flex items-start gap-5">
 
             <div className="bg-blue-100 text-blue-600 h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+
               <FaEnvelope />
+
             </div>
 
             <div>
 
               <h3 className="text-2xl font-bold text-[#0B132B]">
+
                 Email Support
+
               </h3>
 
               <p className="mt-2 text-gray-500">
+
                 support@finora.com
+
               </p>
 
             </div>
@@ -67,17 +154,23 @@ const Contact = () => {
           <div className="bg-white rounded-3xl p-6 shadow-sm flex items-start gap-5">
 
             <div className="bg-green-100 text-green-600 h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+
               <FaPhoneAlt />
+
             </div>
 
             <div>
 
               <h3 className="text-2xl font-bold text-[#0B132B]">
+
                 Phone Number
+
               </h3>
 
               <p className="mt-2 text-gray-500">
+
                 +91 9876543210
+
               </p>
 
             </div>
@@ -88,17 +181,23 @@ const Contact = () => {
           <div className="bg-white rounded-3xl p-6 shadow-sm flex items-start gap-5">
 
             <div className="bg-red-100 text-red-500 h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+
               <FaMapMarkerAlt />
+
             </div>
 
             <div>
 
               <h3 className="text-2xl font-bold text-[#0B132B]">
+
                 Office Location
+
               </h3>
 
               <p className="mt-2 text-gray-500">
+
                 Bangalore, Karnataka, India
+
               </p>
 
             </div>
@@ -109,17 +208,23 @@ const Contact = () => {
           <div className="bg-white rounded-3xl p-6 shadow-sm flex items-start gap-5">
 
             <div className="bg-yellow-100 text-yellow-500 h-14 w-14 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+
               <FaClock />
+
             </div>
 
             <div>
 
               <h3 className="text-2xl font-bold text-[#0B132B]">
+
                 Working Hours
+
               </h3>
 
               <p className="mt-2 text-gray-500">
+
                 Monday - Saturday | 9AM - 6PM
+
               </p>
 
             </div>
@@ -143,35 +248,73 @@ const Contact = () => {
 
           </p>
 
-          <form className="mt-10 space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="mt-10 space-y-6"
+          >
 
             <input
               type="text"
               placeholder="Your Name"
+              value={name}
+              onChange={(e) =>
+                setName(
+                  e.target.value
+                )
+              }
+              required
               className="w-full border border-gray-300 rounded-2xl px-5 py-4 outline-none focus:border-blue-600"
             />
 
             <input
               type="email"
               placeholder="Your Email"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              required
               className="w-full border border-gray-300 rounded-2xl px-5 py-4 outline-none focus:border-blue-600"
             />
 
             <input
               type="text"
               placeholder="Subject"
+              value={subject}
+              onChange={(e) =>
+                setSubject(
+                  e.target.value
+                )
+              }
+              required
               className="w-full border border-gray-300 rounded-2xl px-5 py-4 outline-none focus:border-blue-600"
             />
 
             <textarea
               rows="6"
               placeholder="Your Message"
+              value={message}
+              onChange={(e) =>
+                setMessage(
+                  e.target.value
+                )
+              }
+              required
               className="w-full border border-gray-300 rounded-2xl px-5 py-4 outline-none focus:border-blue-600 resize-none"
             />
 
-            <button className="w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 transition">
+            <button
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 transition disabled:opacity-70"
+            >
 
-              Send Message
+              {
+                loading
+                  ? "Sending..."
+                  : "Send Message"
+              }
 
             </button>
 

@@ -27,8 +27,20 @@ const Settings = () => {
     setProfileImage] =
     useState("");
 
+  const [loading,
+    setLoading] =
+    useState(true);
+
   const [loadingImage,
     setLoadingImage] =
+    useState(false);
+
+  const [updatingProfile,
+    setUpdatingProfile] =
+    useState(false);
+
+  const [changingPassword,
+    setChangingPassword] =
     useState(false);
 
   const [currentPassword,
@@ -47,35 +59,74 @@ const Settings = () => {
     setShowNew] =
     useState(false);
 
+  // HANDLE AUTH ERROR
+  const handleAuthError =
+    () => {
+
+      localStorage.removeItem(
+        "token"
+      );
+
+      localStorage.removeItem(
+        "isAdmin"
+      );
+
+      window.location.href =
+        "/login";
+
+    };
+
   // FETCH PROFILE
-  const fetchProfile = async () => {
+  const fetchProfile =
+    async () => {
 
-    try {
+      try {
 
-      const { data } =
-        await API.get(
-          "/users/profile"
+        setLoading(true);
+
+        const { data } =
+          await API.get(
+            "/users/profile"
+          );
+
+        setName(data.name);
+
+        setEmail(data.email);
+
+        setPhone(
+          data.phone || ""
         );
 
-      setName(data.name);
+        setProfileImage(
+          data.profileImage || ""
+        );
 
-      setEmail(data.email);
+      } catch (error) {
 
-      setPhone(data.phone || "");
+        console.log(error);
 
-      setProfileImage(
-        data.profileImage || ""
-      );
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
 
-    } catch (error) {
+          handleAuthError();
 
-      toast.error(
-        "Failed to load profile"
-      );
+        }
 
-    }
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to load profile"
+        );
 
-  };
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
 
   useEffect(() => {
 
@@ -84,70 +135,82 @@ const Settings = () => {
   }, []);
 
   // IMAGE UPLOAD
-  const uploadImage = async (
-    e
-  ) => {
+  const uploadImage =
+    async (e) => {
 
-    const file =
-      e.target.files[0];
+      const file =
+        e.target.files[0];
 
-    if (!file) return;
+      if (!file) return;
 
-    try {
+      try {
 
-      setLoadingImage(true);
-
-      const formData =
-        new FormData();
-
-      formData.append(
-        "profileImage",
-        file
-      );
-
-      const { data } =
-        await API.put(
-          "/users/profile",
-          formData,
-          {
-            headers: {
-              "Content-Type":
-                "multipart/form-data",
-            },
-          }
+        setLoadingImage(
+          true
         );
 
-      setProfileImage(
-        data.profileImage
-      );
+        const formData =
+          new FormData();
 
-      toast.success(
-        "Profile image updated"
-      );
+        formData.append(
+          "profileImage",
+          file
+        );
 
-      // REFRESH PROFILE
-      fetchProfile();
+        const { data } =
+          await API.put(
+            "/users/profile",
+            formData,
+            {
+              headers: {
+                "Content-Type":
+                  "multipart/form-data",
+              },
+            }
+          );
 
-      // UPDATE NAVBAR
-      window.dispatchEvent(
-        new Event(
-          "profileUpdated"
-        )
-      );
+        setProfileImage(
+          data.profileImage
+        );
 
-    } catch (error) {
+        toast.success(
+          "Profile image updated"
+        );
 
-      toast.error(
-        "Image upload failed"
-      );
+        // UPDATE NAVBAR
+        window.dispatchEvent(
+          new Event(
+            "profileUpdated"
+          )
+        );
 
-    } finally {
+      } catch (error) {
 
-      setLoadingImage(false);
+        console.log(error);
 
-    }
+        if (
+          error.response?.status === 401
+        ) {
 
-  };
+          handleAuthError();
+
+        }
+
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Image upload failed"
+        );
+
+      } finally {
+
+        setLoadingImage(
+          false
+        );
+
+      }
+
+    };
 
   // UPDATE PROFILE
   const handleProfileUpdate =
@@ -157,12 +220,15 @@ const Settings = () => {
 
       try {
 
+        setUpdatingProfile(
+          true
+        );
+
         await API.put(
           "/users/profile",
           {
             name,
             phone,
-            profileImage,
           }
         );
 
@@ -182,8 +248,26 @@ const Settings = () => {
 
       } catch (error) {
 
+        console.log(error);
+
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
+
         toast.error(
-          "Failed to update profile"
+          error.response?.data
+            ?.message ||
+            "Failed to update profile"
+        );
+
+      } finally {
+
+        setUpdatingProfile(
+          false
         );
 
       }
@@ -196,7 +280,33 @@ const Settings = () => {
 
       e.preventDefault();
 
+      // VALIDATION
+      if (
+        !currentPassword ||
+        !newPassword
+      ) {
+
+        return toast.error(
+          "Please fill all password fields"
+        );
+
+      }
+
+      if (
+        newPassword.length < 6
+      ) {
+
+        return toast.error(
+          "Password must be at least 6 characters"
+        );
+
+      }
+
       try {
+
+        setChangingPassword(
+          true
+        );
 
         await API.put(
           "/users/profile",
@@ -210,11 +320,23 @@ const Settings = () => {
           "Password Changed"
         );
 
-        setCurrentPassword("");
+        setCurrentPassword(
+          ""
+        );
 
         setNewPassword("");
 
       } catch (error) {
+
+        console.log(error);
+
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
 
         toast.error(
           error.response?.data
@@ -222,9 +344,28 @@ const Settings = () => {
             "Failed to change password"
         );
 
+      } finally {
+
+        setChangingPassword(
+          false
+        );
+
       }
 
     };
+
+  // LOADING
+  if (loading) {
+
+    return (
+      <div className="text-center py-20 text-xl font-bold text-[#0B132B]">
+
+        Loading...
+
+      </div>
+    );
+
+  }
 
   return (
     <section>
@@ -356,7 +497,9 @@ const Settings = () => {
                 type="text"
                 value={name}
                 onChange={(e) =>
-                  setName(e.target.value)
+                  setName(
+                    e.target.value
+                  )
                 }
                 className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
               />
@@ -394,7 +537,9 @@ const Settings = () => {
                 type="text"
                 value={phone}
                 onChange={(e) =>
-                  setPhone(e.target.value)
+                  setPhone(
+                    e.target.value
+                  )
                 }
                 className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
               />
@@ -403,9 +548,18 @@ const Settings = () => {
 
           </div>
 
-          <button className="mt-8 bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-700 transition">
+          <button
+            disabled={
+              updatingProfile
+            }
+            className="mt-8 bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-700 transition disabled:opacity-70"
+          >
 
-            Update Profile
+            {
+              updatingProfile
+                ? "Updating..."
+                : "Update Profile"
+            }
 
           </button>
 
@@ -444,7 +598,9 @@ const Settings = () => {
                     ? "text"
                     : "password"
                 }
-                value={currentPassword}
+                value={
+                  currentPassword
+                }
                 onChange={(e) =>
                   setCurrentPassword(
                     e.target.value
@@ -490,7 +646,9 @@ const Settings = () => {
                     ? "text"
                     : "password"
                 }
-                value={newPassword}
+                value={
+                  newPassword
+                }
                 onChange={(e) =>
                   setNewPassword(
                     e.target.value
@@ -522,9 +680,18 @@ const Settings = () => {
           {/* BUTTON */}
           <div className="md:col-span-2">
 
-            <button className="bg-red-500 text-white px-8 py-3 rounded-2xl hover:bg-red-600 transition">
+            <button
+              disabled={
+                changingPassword
+              }
+              className="bg-red-500 text-white px-8 py-3 rounded-2xl hover:bg-red-600 transition disabled:opacity-70"
+            >
 
-              Change Password
+              {
+                changingPassword
+                  ? "Changing..."
+                  : "Change Password"
+              }
 
             </button>
 

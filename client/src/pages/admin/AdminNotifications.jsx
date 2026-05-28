@@ -46,11 +46,36 @@ const AdminNotifications = () => {
     setLoading] =
     useState(false);
 
+  const [fetchingUsers,
+    setFetchingUsers] =
+    useState(true);
+
+  // HANDLE AUTH ERROR
+  const handleAuthError =
+    () => {
+
+      localStorage.removeItem(
+        "token"
+      );
+
+      localStorage.removeItem(
+        "isAdmin"
+      );
+
+      window.location.href =
+        "/login";
+
+    };
+
   // FETCH USERS
   const fetchUsers =
     async () => {
 
       try {
+
+        setFetchingUsers(
+          true
+        );
 
         const { data } =
           await API.get(
@@ -66,6 +91,27 @@ const AdminNotifications = () => {
       } catch (error) {
 
         console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
+
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to load users"
+        );
+
+      } finally {
+
+        setFetchingUsers(
+          false
+        );
 
       }
 
@@ -84,12 +130,12 @@ const AdminNotifications = () => {
       users.filter(
         (user) =>
           user.name
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(
               search.toLowerCase()
             ) ||
           user.email
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(
               search.toLowerCase()
             )
@@ -101,13 +147,24 @@ const AdminNotifications = () => {
 
   }, [search, users]);
 
-  // SEND
+  // SEND NOTIFICATION
   const submitHandler =
     async (e) => {
 
       e.preventDefault();
 
       // VALIDATION
+      if (
+        !title.trim() ||
+        !message.trim()
+      ) {
+
+        return toast.error(
+          "Please fill all fields"
+        );
+
+      }
+
       if (
         sendType ===
           "specific" &&
@@ -157,6 +214,17 @@ const AdminNotifications = () => {
         );
 
       } catch (error) {
+
+        console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
 
         toast.error(
           error.response?.data
@@ -279,7 +347,15 @@ const AdminNotifications = () => {
               <div className="mt-4 border border-gray-200 rounded-2xl overflow-hidden max-h-[250px] overflow-y-auto">
 
                 {
-                  filteredUsers
+                  fetchingUsers ? (
+
+                    <div className="p-5 text-center text-gray-500">
+
+                      Loading users...
+
+                    </div>
+
+                  ) : filteredUsers
                     .length === 0 ? (
 
                     <div className="p-5 text-center text-gray-500">

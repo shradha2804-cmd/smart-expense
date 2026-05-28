@@ -107,6 +107,85 @@ export const getAdminDashboard =
           )
           .slice(0, 8);
 
+      // ================= MONTHLY ANALYTICS =================
+
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      const monthlyMap = {};
+
+      // INIT MONTHS
+      monthNames.forEach(
+        (month) => {
+
+          monthlyMap[month] = {
+            month,
+            income: 0,
+            expense: 0,
+          };
+
+        }
+      );
+
+      // ADD INCOME
+      incomes.forEach(
+        (item) => {
+
+          const month =
+            monthNames[
+              new Date(
+                item.date
+              ).getMonth()
+            ];
+
+          monthlyMap[
+            month
+          ].income +=
+            Number(
+              item.amount || 0
+            );
+
+        }
+      );
+
+      // ADD EXPENSE
+      expenses.forEach(
+        (item) => {
+
+          const month =
+            monthNames[
+              new Date(
+                item.date
+              ).getMonth()
+            ];
+
+          monthlyMap[
+            month
+          ].expense +=
+            Number(
+              item.amount || 0
+            );
+
+        }
+      );
+
+      const monthlyData =
+        Object.values(
+          monthlyMap
+        );
+
       // ================= RESPONSE =================
 
       res.json({
@@ -122,6 +201,8 @@ export const getAdminDashboard =
         recentUsers,
 
         recentTransactions,
+
+        monthlyData,
 
       });
 

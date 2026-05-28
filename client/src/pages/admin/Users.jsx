@@ -26,11 +26,34 @@ const Users = () => {
     setLoading] =
     useState(true);
 
+  const [deletingId,
+    setDeletingId] =
+    useState("");
+
+  // HANDLE AUTH ERROR
+  const handleAuthError =
+    () => {
+
+      localStorage.removeItem(
+        "token"
+      );
+
+      localStorage.removeItem(
+        "isAdmin"
+      );
+
+      window.location.href =
+        "/login";
+
+    };
+
   // FETCH USERS
   const fetchUsers =
     async () => {
 
       try {
+
+        setLoading(true);
 
         const { data } =
           await API.get(
@@ -41,8 +64,21 @@ const Users = () => {
 
       } catch (error) {
 
+        console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
+
         toast.error(
-          "Failed to load users"
+          error.response?.data
+            ?.message ||
+            "Failed to load users"
         );
 
       } finally {
@@ -65,6 +101,8 @@ const Users = () => {
 
       try {
 
+        setDeletingId(id);
+
         await API.delete(
           `/admin/users/${id}`
         );
@@ -73,14 +111,37 @@ const Users = () => {
           "User deleted"
         );
 
-        // REFRESH
-        fetchUsers();
+        // REMOVE FROM STATE
+        setUsers(
+          (prev) =>
+            prev.filter(
+              (user) =>
+                user._id !== id
+            )
+        );
 
       } catch (error) {
 
+        console.log(error);
+
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
+
+          handleAuthError();
+
+        }
+
         toast.error(
-          "Delete failed"
+          error.response?.data
+            ?.message ||
+            "Delete failed"
         );
+
+      } finally {
+
+        setDeletingId("");
 
       }
 
@@ -97,17 +158,18 @@ const Users = () => {
     users.filter(
       (user) =>
         user.name
-          .toLowerCase()
+          ?.toLowerCase()
           .includes(
             search.toLowerCase()
           ) ||
         user.email
-          .toLowerCase()
+          ?.toLowerCase()
           .includes(
             search.toLowerCase()
           )
     );
 
+  // LOADING
   if (loading) {
 
     return (
@@ -341,15 +403,26 @@ const Users = () => {
                         <td className="px-6 py-4 text-center">
 
                           <button
+                            disabled={
+                              deletingId ===
+                              user._id
+                            }
                             onClick={() =>
                               deleteHandler(
                                 user._id
                               )
                             }
-                            className="h-11 w-11 rounded-xl bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center"
+                            className="h-11 w-11 rounded-xl bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center disabled:opacity-60"
                           >
 
-                            <FaTrash />
+                            {
+                              deletingId ===
+                              user._id ? (
+                                "..."
+                              ) : (
+                                <FaTrash />
+                              )
+                            }
 
                           </button>
 

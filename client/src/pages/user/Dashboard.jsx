@@ -36,44 +36,66 @@ const Dashboard = () => {
       barChartData: [],
     });
 
-  // FETCH PROFILE
-  const fetchProfile =
+  // FETCH DASHBOARD DATA
+  const fetchDashboardData =
     async () => {
 
       try {
 
-        const { data } =
-          await API.get(
-            "/users/profile"
-          );
+        setLoading(true);
 
-        setUser(data);
+        // FETCH BOTH APIs TOGETHER
+        const [
+          profileRes,
+          dashboardRes,
+        ] = await Promise.all([
+
+          API.get(
+            "/users/profile"
+          ),
+
+          API.get(
+            "/dashboard"
+          ),
+
+        ]);
+
+        // PROFILE
+        setUser(
+          profileRes.data
+        );
+
+        // DASHBOARD
+        setDashboardData(
+          dashboardRes.data
+        );
 
       } catch (error) {
 
         console.log(error);
 
-      }
+        // TOKEN EXPIRED
+        if (
+          error.response?.status === 401
+        ) {
 
-    };
-
-  // FETCH DASHBOARD
-  const fetchDashboard =
-    async () => {
-
-      try {
-
-        const { data } =
-          await API.get(
-            "/dashboard"
+          localStorage.removeItem(
+            "token"
           );
 
-        setDashboardData(data);
+          localStorage.removeItem(
+            "isAdmin"
+          );
 
-      } catch (error) {
+          window.location.href =
+            "/login";
+
+        }
 
         toast.error(
-          "Failed to load dashboard"
+          error.response?.data
+            ?.message ||
+            "Failed to load dashboard"
         );
 
       } finally {
@@ -86,12 +108,11 @@ const Dashboard = () => {
 
   useEffect(() => {
 
-    fetchProfile();
-
-    fetchDashboard();
+    fetchDashboardData();
 
   }, []);
 
+  // LOADING
   if (loading) {
 
     return (
