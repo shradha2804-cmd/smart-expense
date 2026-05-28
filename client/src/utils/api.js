@@ -23,7 +23,6 @@ const logoutUser =
       "isAdmin"
     );
 
-    // PREVENT LOOP
     const currentPath =
       window.location.pathname;
 
@@ -39,8 +38,7 @@ const logoutUser =
 
   };
 
-// ================= REQUEST INTERCEPTOR =================
-
+// REQUEST INTERCEPTOR
 API.interceptors.request.use(
 
   (req) => {
@@ -50,7 +48,6 @@ API.interceptors.request.use(
         "token"
       );
 
-    // ADD TOKEN
     if (token) {
 
       req.headers.Authorization =
@@ -67,8 +64,7 @@ API.interceptors.request.use(
 
 );
 
-// ================= RESPONSE INTERCEPTOR =================
-
+// RESPONSE INTERCEPTOR
 API.interceptors.response.use(
 
   (response) =>
@@ -76,7 +72,6 @@ API.interceptors.response.use(
 
   (error) => {
 
-    // TOKEN EXPIRED
     if (
       error.response
         ?.status === 401
