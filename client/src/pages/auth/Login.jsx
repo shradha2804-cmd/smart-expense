@@ -61,13 +61,22 @@ const Login = () => {
           "Login Successful"
         );
 
+        // STORE ONLY TOKEN
+        localStorage.setItem(
+          "token",
+          data.token
+        );
+
+        // STORE ADMIN STATUS
+        localStorage.setItem(
+          "isAdmin",
+          String(
+            data.isAdmin
+          )
+        );
+
         // ADMIN LOGIN
         if (data.isAdmin) {
-
-          localStorage.setItem(
-            "adminInfo",
-            JSON.stringify(data)
-          );
 
           navigate(
             "/admin/dashboard"
@@ -76,11 +85,6 @@ const Login = () => {
         } else {
 
           // USER LOGIN
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify(data)
-          );
-
           navigate(
             "/dashboard"
           );
@@ -106,10 +110,10 @@ const Login = () => {
   return (
     <div className="w-full max-w-md mx-auto">
 
-      <div className="bg-white rounded-[35px] shadow-xl p-5 md:p-8">
+      <div className="bg-white rounded-[35px] shadow-xl p-5 md:p-8 overflow-hidden">
 
         {/* TITLE */}
-        <h2 className="text-2xl md:text-3xl font-bold text-[#0B132B]">
+        <h2 className="text-2xl md:text-3xl font-bold text-[#0B132B] break-words">
 
           Welcome Back
 
@@ -122,7 +126,10 @@ const Login = () => {
         </p>
 
         {/* GOOGLE BUTTON */}
-        <button className="mt-6 w-full border border-gray-300 rounded-2xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50 transition">
+        <button
+          type="button"
+          className="mt-6 w-full border border-gray-300 rounded-2xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50 transition"
+        >
 
           <FaGoogle className="text-red-500" />
 
@@ -170,6 +177,7 @@ const Login = () => {
                 )
               }
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+              required
             />
 
           </div>
@@ -199,6 +207,7 @@ const Login = () => {
                   )
                 }
                 className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
+                required
               />
 
               <button
@@ -211,9 +220,11 @@ const Login = () => {
                 className="absolute top-1/2 -translate-y-1/2 right-5 text-gray-500"
               >
 
-                {showPassword
-                  ? <FaEyeSlash />
-                  : <FaEye />}
+                {
+                  showPassword
+                    ? <FaEyeSlash />
+                    : <FaEye />
+                }
 
               </button>
 
@@ -242,9 +253,11 @@ const Login = () => {
             className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition disabled:opacity-70"
           >
 
-            {loading
-              ? "Loading..."
-              : "Login"}
+            {
+              loading
+                ? "Loading..."
+                : "Login"
+            }
 
           </button>
 

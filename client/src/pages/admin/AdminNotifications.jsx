@@ -141,6 +141,7 @@ const AdminNotifications = () => {
           "Notification sent"
         );
 
+        // RESET
         setTitle("");
 
         setMessage("");
@@ -149,6 +150,10 @@ const AdminNotifications = () => {
 
         setSelectedUser(
           null
+        );
+
+        setSendType(
+          "all"
         );
 
       } catch (error) {
@@ -173,7 +178,7 @@ const AdminNotifications = () => {
       {/* TOP */}
       <div>
 
-        <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+        <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065] break-words">
 
           Notifications
 
@@ -192,7 +197,7 @@ const AdminNotifications = () => {
         onSubmit={
           submitHandler
         }
-        className="mt-8 bg-white rounded-3xl p-5 md:p-6 shadow-sm space-y-5"
+        className="mt-8 bg-white rounded-3xl p-5 md:p-6 shadow-sm space-y-5 overflow-hidden"
       >
 
         {/* SEND TYPE */}
@@ -299,7 +304,7 @@ const AdminNotifications = () => {
                               user
                             )
                           }
-                          className={`cursor-pointer px-4 py-3 flex items-center gap-4 border-b border-gray-100 hover:bg-purple-50 transition
+                          className={`cursor-pointer px-4 py-3 flex items-center gap-4 border-b border-gray-100 hover:bg-purple-50 transition overflow-hidden
                           ${
                             selectedUser?._id ===
                             user._id
@@ -317,12 +322,12 @@ const AdminNotifications = () => {
                                   user.profileImage
                                 }
                                 alt=""
-                                className="h-12 w-12 rounded-full object-cover"
+                                className="h-12 w-12 rounded-full object-cover shrink-0"
                               />
 
                             ) : (
 
-                              <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase">
+                              <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase shrink-0">
 
                                 {
                                   user.name?.charAt(
@@ -336,9 +341,9 @@ const AdminNotifications = () => {
                           }
 
                           {/* INFO */}
-                          <div>
+                          <div className="min-w-0 flex-1">
 
-                            <h3 className="font-semibold text-[#2E1065]">
+                            <h3 className="font-semibold text-[#2E1065] break-words">
 
                               {
                                 user.name
@@ -346,7 +351,7 @@ const AdminNotifications = () => {
 
                             </h3>
 
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 break-all">
 
                               {
                                 user.email
@@ -370,7 +375,7 @@ const AdminNotifications = () => {
               {
                 selectedUser && (
 
-                  <div className="mt-4 bg-purple-100 text-purple-700 px-5 py-3 rounded-2xl">
+                  <div className="mt-4 bg-purple-100 text-purple-700 px-5 py-3 rounded-2xl break-words">
 
                     Selected User:
                     {" "}
@@ -435,7 +440,7 @@ const AdminNotifications = () => {
                 e.target.value
               )
             }
-            className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-purple-600 resize-none"
+            className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-purple-600 resize-none break-words"
             required
           ></textarea>
 

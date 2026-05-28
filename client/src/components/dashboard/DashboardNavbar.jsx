@@ -10,62 +10,47 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
+import API from "../../utils/api";
+
 const DashboardNavbar = ({
   setSidebarOpen,
+  unreadCount,
 }) => {
 
   const navigate = useNavigate();
 
-  const [hasUnread,
-    setHasUnread] =
-    useState(false);
+  const [userInfo,
+    setUserInfo] =
+    useState(null);
 
-  const checkUnread =
-    () => {
+  // FETCH USER PROFILE
+  const fetchUserProfile =
+    async () => {
 
-      const userInfo =
-        JSON.parse(
-          localStorage.getItem(
-            "userInfo"
-          )
+      try {
+
+        const { data } =
+          await API.get(
+            "/users/profile"
+          );
+
+        setUserInfo(data);
+
+      } catch (error) {
+
+        console.log(
+          error
         );
 
-      const unread =
-        userInfo?.notifications?.some(
-          (item) =>
-            item.read === false
-        );
-
-      setHasUnread(unread);
+      }
 
     };
 
   useEffect(() => {
 
-    checkUnread();
-
-    window.addEventListener(
-      "notificationUpdate",
-      checkUnread
-    );
-
-    return () => {
-
-      window.removeEventListener(
-        "notificationUpdate",
-        checkUnread
-      );
-
-    };
+    fetchUserProfile();
 
   }, []);
-
-  const userInfo =
-    JSON.parse(
-      localStorage.getItem(
-        "userInfo"
-      )
-    );
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
@@ -105,7 +90,7 @@ const DashboardNavbar = ({
 
           <FaBell className="text-2xl text-gray-600" />
 
-          {hasUnread && (
+          {unreadCount > 0 && (
 
             <span className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></span>
 

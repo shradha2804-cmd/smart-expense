@@ -1,4 +1,7 @@
-import React from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   FaBars,
@@ -9,6 +12,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import API from "../../utils/api";
+
 const AdminNavbar = ({
   setSidebarOpen,
 }) => {
@@ -16,33 +21,57 @@ const AdminNavbar = ({
   const navigate =
     useNavigate();
 
-  const adminInfo =
-    JSON.parse(
-      localStorage.getItem(
-        "adminInfo"
-      )
-    );
+  const [adminInfo,
+    setAdminInfo] =
+    useState(null);
+
+  // FETCH ADMIN PROFILE
+  const fetchAdminProfile =
+    async () => {
+
+      try {
+
+        const { data } =
+          await API.get(
+            "/users/profile"
+          );
+
+        setAdminInfo(data);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
+
+  useEffect(() => {
+
+    fetchAdminProfile();
+
+  }, []);
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30 overflow-hidden">
 
       {/* LEFT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 min-w-0">
 
         <button
           onClick={() =>
             setSidebarOpen(true)
           }
-          className="lg:hidden text-xl text-[#2E1065]"
+          className="lg:hidden text-xl text-[#2E1065] shrink-0"
         >
 
           <FaBars />
 
         </button>
 
-        <div>
+        <div className="min-w-0">
 
-          <h1 className="text-xl md:text-2xl font-bold text-[#2E1065]">
+          <h1 className="text-xl md:text-2xl font-bold text-[#2E1065] break-words">
 
             Admin Dashboard
 
@@ -59,7 +88,7 @@ const AdminNavbar = ({
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 shrink-0">
 
         {/* NOTIFICATION */}
         <button
@@ -78,15 +107,31 @@ const AdminNavbar = ({
         </button>
 
         {/* PROFILE */}
-        <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase text-sm">
+        {
+          adminInfo?.profileImage ? (
 
-          {
-            adminInfo?.name?.charAt(
-              0
-            )
-          }
+            <img
+              src={
+                adminInfo.profileImage
+              }
+              alt=""
+              className="h-10 w-10 rounded-full object-cover border-2 border-purple-100"
+            />
 
-        </div>
+          ) : (
+
+            <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase text-sm">
+
+              {
+                adminInfo?.name?.charAt(
+                  0
+                )
+              }
+
+            </div>
+
+          )
+        }
 
       </div>
 

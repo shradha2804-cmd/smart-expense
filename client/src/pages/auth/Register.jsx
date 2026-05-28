@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+} from "react";
 
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import toast from "react-hot-toast";
 
@@ -14,63 +19,80 @@ import {
 
 const Register = () => {
 
-const [showPassword, setShowPassword] = useState(false);
+  const [showPassword,
+    setShowPassword] =
+    useState(false);
 
-const [name, setName] = useState("");
+  const [name,
+    setName] =
+    useState("");
 
-const [email, setEmail] = useState("");
+  const [email,
+    setEmail] =
+    useState("");
 
-const [password, setPassword] = useState("");
+  const [phone,
+    setPhone] =
+    useState("");
 
-const [loading, setLoading] = useState(false);
+  const [password,
+    setPassword] =
+    useState("");
 
-const navigate = useNavigate();
+  const [loading,
+    setLoading] =
+    useState(false);
 
-const [phone, setPhone] =
-  useState("");
+  const navigate =
+    useNavigate();
 
-const handleRegister = async (e) => {
+  const handleRegister =
+    async (e) => {
 
-  e.preventDefault();
+      e.preventDefault();
 
-  try {
+      try {
 
-    setLoading(true);
+        setLoading(true);
 
-    const { data } = await API.post(
-      "/auth/register",
-      {
-        name,
-        email,
-        phone,
-        password,
+        await API.post(
+          "/auth/register",
+          {
+            name,
+            email,
+            phone,
+            password,
+          }
+        );
+
+        toast.success(
+          "Registration Successful"
+        );
+
+        navigate("/login");
+
+      } catch (error) {
+
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Something went wrong"
+        );
+
+      } finally {
+
+        setLoading(false);
+
       }
-    );
-toast.success("Registration Successful");
 
-navigate("/login");
-
-  } catch (error) {
-
-    toast.error(
-      error.response?.data?.message ||
-      "Something went wrong"
-    );
-
-  } finally {
-
-    setLoading(false);
-
-  }
-
-};
+    };
 
   return (
     <div className="w-full max-w-md mx-auto">
 
-      <div className="bg-white rounded-[35px] shadow-xl p-5 md:p-8">
+      <div className="bg-white rounded-[35px] shadow-xl p-5 md:p-8 overflow-hidden">
 
-        <h2 className="text-2xl md:text-3xl font-bold text-[#0B132B]">
+        <h2 className="text-2xl md:text-3xl font-bold text-[#0B132B] break-words">
 
           Create Account
 
@@ -83,7 +105,10 @@ navigate("/login");
         </p>
 
         {/* GOOGLE BUTTON */}
-        <button className="mt-6 w-full border border-gray-300 rounded-2xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50 transition">
+        <button
+          type="button"
+          className="mt-6 w-full border border-gray-300 rounded-2xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50 transition"
+        >
 
           <FaGoogle className="text-red-500" />
 
@@ -97,7 +122,9 @@ navigate("/login");
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
           <span className="text-gray-400 text-sm">
+
             OR
+
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
@@ -106,23 +133,31 @@ navigate("/login");
 
         {/* FORM */}
         <form
-  onSubmit={handleRegister}
-  className="space-y-5"
->
+          onSubmit={handleRegister}
+          className="space-y-5"
+        >
 
           {/* NAME */}
           <div>
 
             <label className="block mb-2 text-sm font-medium text-gray-700">
+
               Full Name
+
             </label>
-        <input
-  type="text"
-  placeholder="Enter your full name"
-  value={name}
-  onChange={(e) => setName(e.target.value)}
-  className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
-/>
+
+            <input
+              type="text"
+              placeholder="Enter your full name"
+              value={name}
+              onChange={(e) =>
+                setName(
+                  e.target.value
+                )
+              }
+              className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+              required
+            />
 
           </div>
 
@@ -130,63 +165,92 @@ navigate("/login");
           <div>
 
             <label className="block mb-2 text-sm font-medium text-gray-700">
+
               Email
+
             </label>
 
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+              required
             />
 
           </div>
 
           {/* PHONE */}
-<div>
+          <div>
 
-  <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
 
-    Phone Number
+              Phone Number
 
-  </label>
+            </label>
 
-  <input
-    type="text"
-    placeholder="Enter phone number"
-    value={phone}
-    onChange={(e) =>
-      setPhone(e.target.value)
-    }
-    className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
-  />
+            <input
+              type="text"
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={(e) =>
+                setPhone(
+                  e.target.value
+                )
+              }
+              className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+            />
 
-</div>
+          </div>
 
           {/* PASSWORD */}
           <div>
 
             <label className="block mb-2 text-sm font-medium text-gray-700">
+
               Password
+
             </label>
 
             <div className="relative">
 
               <input
-  type={showPassword ? "text" : "password"}
-  placeholder="Create password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
-/>
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Create password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
+                required
+              />
+
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
                 className="absolute top-1/2 -translate-y-1/2 right-5 text-gray-500"
               >
 
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {
+                  showPassword
+                    ? <FaEyeSlash />
+                    : <FaEye />
+                }
 
               </button>
 
@@ -195,14 +259,20 @@ navigate("/login");
           </div>
 
           {/* BUTTON */}
-   <button
-  type="submit"
-  className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition"
->
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-2xl hover:bg-blue-700 transition disabled:opacity-70"
+          >
 
-  {loading ? "Loading..." : "Create Account"}
+            {
+              loading
+                ? "Loading..."
+                : "Create Account"
+            }
 
-</button>
+          </button>
+
         </form>
 
         {/* LOGIN */}
@@ -214,7 +284,9 @@ navigate("/login");
             to="/login"
             className="text-blue-600 ml-2 font-medium"
           >
+
             Login
+
           </Link>
 
         </p>

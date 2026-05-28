@@ -8,17 +8,27 @@ import {
 const AdminProtectedRoute =
   () => {
 
-    const adminInfo =
-      JSON.parse(
-        localStorage.getItem(
-          "adminInfo"
-        )
+    // GET TOKEN
+    const token =
+      localStorage.getItem(
+        "token"
       );
 
-    return adminInfo ? (
+    // GET ADMIN STATUS
+    const isAdmin =
+      localStorage.getItem(
+        "isAdmin"
+      );
+
+    return token &&
+      isAdmin === "true" ? (
+
       <Outlet />
+
     ) : (
+
       <Navigate to="/login" />
+
     );
 
   };

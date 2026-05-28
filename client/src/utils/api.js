@@ -1,49 +1,40 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL:
-    "http://localhost:5000/api",
+  baseURL: "http://localhost:5000/api",
 });
-
 
 // REQUEST INTERCEPTOR
 API.interceptors.request.use(
   (req) => {
+    const token = localStorage.getItem("token");
 
-    // USER TOKEN
-    const userInfo =
-      JSON.parse(
-        localStorage.getItem(
-          "userInfo"
-        )
-      );
-
-    // ADMIN TOKEN
-    const adminInfo =
-      JSON.parse(
-        localStorage.getItem(
-          "adminInfo"
-        )
-      );
-
-    // SEND USER TOKEN
-    if (userInfo?.token) {
-
-      req.headers.Authorization =
-        `Bearer ${userInfo.token}`;
-
-    }
-
-    // SEND ADMIN TOKEN
-    if (adminInfo?.token) {
-
-      req.headers.Authorization =
-        `Bearer ${adminInfo.token}`;
-
+    // ADD TOKEN TO HEADERS
+    if (token) {
+      req.headers.Authorization = `Bearer ${token}`;
     }
 
     return req;
+  },
 
+  (error) => Promise.reject(error)
+);
+
+// RESPONSE INTERCEPTOR
+API.interceptors.response.use(
+  (response) => response,
+
+  (error) => {
+    // TOKEN EXPIRED / INVALID
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("isAdmin");
+
+      // OPTIONAL REDIRECT
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
   }
 );
 

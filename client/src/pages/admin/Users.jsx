@@ -73,6 +73,7 @@ const Users = () => {
           "User deleted"
         );
 
+        // REFRESH
         fetchUsers();
 
       } catch (error) {
@@ -127,7 +128,7 @@ const Users = () => {
 
         <div>
 
-          <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+          <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065] break-words">
 
             Users Management
 
@@ -210,136 +211,155 @@ const Users = () => {
             <tbody>
 
               {
-                filteredUsers.map(
-                  (user) => (
+                filteredUsers.length === 0 ? (
 
-                    <tr
-                      key={user._id}
-                      className="border-t border-gray-100"
+                  <tr>
+
+                    <td
+                      colSpan="5"
+                      className="text-center py-10 text-gray-500"
                     >
 
-                      {/* USER */}
-                      <td className="px-6 py-4">
+                      No users found
 
-                        <div className="flex items-center gap-4">
+                    </td>
 
-                          {
-                            user.profileImage ? (
+                  </tr>
 
-                              <img
-                                src={
-                                  user.profileImage
-                                }
-                                alt=""
-                                className="h-12 w-12 rounded-full object-cover"
-                              />
+                ) : (
 
-                            ) : (
+                  filteredUsers.map(
+                    (user) => (
 
-                              <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase">
+                      <tr
+                        key={user._id}
+                        className="border-t border-gray-100"
+                      >
+
+                        {/* USER */}
+                        <td className="px-6 py-4">
+
+                          <div className="flex items-center gap-4 min-w-0">
+
+                            {
+                              user.profileImage ? (
+
+                                <img
+                                  src={
+                                    user.profileImage
+                                  }
+                                  alt=""
+                                  className="h-12 w-12 rounded-full object-cover shrink-0"
+                                />
+
+                              ) : (
+
+                                <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase shrink-0">
+
+                                  {
+                                    user.name?.charAt(
+                                      0
+                                    )
+                                  }
+
+                                </div>
+
+                              )
+                            }
+
+                            <div className="min-w-0">
+
+                              <h3 className="font-semibold text-[#2E1065] break-words">
 
                                 {
-                                  user.name?.charAt(
-                                    0
-                                  )
+                                  user.name
                                 }
 
-                              </div>
+                              </h3>
 
-                            )
-                          }
+                              <p className="text-sm text-gray-500 break-all">
 
-                          <div>
+                                {
+                                  user.email
+                                }
 
-                            <h3 className="font-semibold text-[#2E1065]">
+                              </p>
 
-                              {
-                                user.name
-                              }
-
-                            </h3>
-
-                            <p className="text-sm text-gray-500">
-
-                              {
-                                user.email
-                              }
-
-                            </p>
+                            </div>
 
                           </div>
 
-                        </div>
+                        </td>
 
-                      </td>
+                        {/* PHONE */}
+                        <td className="px-6 py-4 text-gray-600 break-words">
 
-                      {/* PHONE */}
-                      <td className="px-6 py-4 text-gray-600">
+                          {
+                            user.phone ||
+                            "N/A"
+                          }
 
-                        {
-                          user.phone ||
-                          "N/A"
-                        }
+                        </td>
 
-                      </td>
+                        {/* ROLE */}
+                        <td className="px-6 py-4">
 
-                      {/* ROLE */}
-                      <td className="px-6 py-4">
+                          {
+                            user.isAdmin ? (
 
-                        {
-                          user.isAdmin ? (
+                              <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
 
-                            <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
+                                Admin
 
-                              Admin
+                              </span>
 
-                            </span>
+                            ) : (
 
-                          ) : (
+                              <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
 
-                            <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
+                                User
 
-                              User
+                              </span>
 
-                            </span>
-
-                          )
-                        }
-
-                      </td>
-
-                      {/* DATE */}
-                      <td className="px-6 py-4 text-gray-600">
-
-                        {
-                          new Date(
-                            user.createdAt
-                          ).toLocaleDateString()
-                        }
-
-                      </td>
-
-                      {/* ACTION */}
-                      <td className="px-6 py-4 text-center">
-
-                        <button
-                          onClick={() =>
-                            deleteHandler(
-                              user._id
                             )
                           }
-                          className="h-11 w-11 rounded-xl bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center"
-                        >
 
-                          <FaTrash />
+                        </td>
 
-                        </button>
+                        {/* DATE */}
+                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
 
-                      </td>
+                          {
+                            new Date(
+                              user.createdAt
+                            ).toLocaleDateString()
+                          }
 
-                    </tr>
+                        </td>
 
+                        {/* ACTION */}
+                        <td className="px-6 py-4 text-center">
+
+                          <button
+                            onClick={() =>
+                              deleteHandler(
+                                user._id
+                              )
+                            }
+                            className="h-11 w-11 rounded-xl bg-red-100 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center"
+                          >
+
+                            <FaTrash />
+
+                          </button>
+
+                        </td>
+
+                      </tr>
+
+                    )
                   )
+
                 )
               }
 

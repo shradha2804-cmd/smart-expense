@@ -77,7 +77,7 @@ const AdminDashboard = () => {
       {/* TITLE */}
       <div>
 
-        <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+        <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065] break-words">
 
           Dashboard Overview
 
@@ -95,11 +95,11 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-8">
 
         {/* CARD */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500 text-sm">
 
@@ -107,7 +107,7 @@ const AdminDashboard = () => {
 
               </p>
 
-              <h1 className="mt-2 text-3xl font-bold text-[#2E1065]">
+              <h1 className="mt-2 text-3xl font-bold text-[#2E1065] break-words">
 
                 {
                   dashboardData?.totalUsers
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl">
+            <div className="h-14 w-14 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl shrink-0">
 
               <FaUsers />
 
@@ -128,11 +128,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* INCOME */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500 text-sm">
 
@@ -140,7 +140,7 @@ const AdminDashboard = () => {
 
               </p>
 
-              <h1 className="mt-2 text-3xl font-bold text-green-600">
+              <h1 className="mt-2 text-3xl font-bold text-green-600 break-words">
 
                 ₹{
                   dashboardData?.totalIncome
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="h-14 w-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-2xl">
+            <div className="h-14 w-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-2xl shrink-0">
 
               <FaWallet />
 
@@ -161,11 +161,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* EXPENSE */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500 text-sm">
 
@@ -173,7 +173,7 @@ const AdminDashboard = () => {
 
               </p>
 
-              <h1 className="mt-2 text-3xl font-bold text-red-500">
+              <h1 className="mt-2 text-3xl font-bold text-red-500 break-words">
 
                 ₹{
                   dashboardData?.totalExpenses
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="h-14 w-14 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-2xl">
+            <div className="h-14 w-14 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-2xl shrink-0">
 
               <FaMoneyBillWave />
 
@@ -194,11 +194,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* TRANSACTIONS */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500 text-sm">
 
@@ -206,7 +206,7 @@ const AdminDashboard = () => {
 
               </p>
 
-              <h1 className="mt-2 text-3xl font-bold text-blue-600">
+              <h1 className="mt-2 text-3xl font-bold text-blue-600 break-words">
 
                 {
                   dashboardData?.totalTransactions
@@ -216,7 +216,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl">
+            <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl shrink-0">
 
               <FaExchangeAlt />
 
@@ -232,7 +232,7 @@ const AdminDashboard = () => {
       <div className="grid xl:grid-cols-2 gap-5 mt-8">
 
         {/* USERS */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
           <h2 className="text-xl font-bold text-[#2E1065]">
 
@@ -244,69 +244,82 @@ const AdminDashboard = () => {
 
             {
               dashboardData?.recentUsers
-                ?.map(
-                  (user) => (
+                ?.length === 0 ? (
 
-                    <div
-                      key={user._id}
-                      className="flex items-center justify-between border border-gray-100 rounded-2xl p-4"
-                    >
+                <p className="text-gray-500">
 
-                      <div className="flex items-center gap-3">
+                  No users found
 
-                        {/* IMAGE */}
-                        {
-                          user.profileImage ? (
+                </p>
 
-                            <img
-                              src={
-                                user.profileImage
-                              }
-                              alt=""
-                              className="h-12 w-12 rounded-full object-cover"
-                            />
+              ) : (
 
-                          ) : (
+                dashboardData?.recentUsers
+                  ?.map(
+                    (user) => (
 
-                            <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase">
+                      <div
+                        key={user._id}
+                        className="flex items-center justify-between border border-gray-100 rounded-2xl p-4 gap-4 overflow-hidden"
+                      >
+
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+
+                          {/* IMAGE */}
+                          {
+                            user.profileImage ? (
+
+                              <img
+                                src={
+                                  user.profileImage
+                                }
+                                alt=""
+                                className="h-12 w-12 rounded-full object-cover shrink-0"
+                              />
+
+                            ) : (
+
+                              <div className="h-12 w-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold uppercase shrink-0">
+
+                                {
+                                  user.name?.charAt(
+                                    0
+                                  )
+                                }
+
+                              </div>
+
+                            )
+                          }
+
+                          <div className="min-w-0 flex-1">
+
+                            <h3 className="font-semibold text-sm md:text-base text-[#2E1065] break-words">
 
                               {
-                                user.name?.charAt(
-                                  0
-                                )
+                                user.name
                               }
 
-                            </div>
+                            </h3>
 
-                          )
-                        }
+                            <p className="text-xs md:text-sm text-gray-500 break-all">
 
-                        <div>
+                              {
+                                user.email
+                              }
 
-                          <h3 className="font-semibold text-sm md:text-base text-[#2E1065]">
+                            </p>
 
-                            {
-                              user.name
-                            }
-
-                          </h3>
-
-                          <p className="text-xs md:text-sm text-gray-500">
-
-                            {
-                              user.email
-                            }
-
-                          </p>
+                          </div>
 
                         </div>
 
                       </div>
 
-                    </div>
-
+                    )
                   )
-                )
+
+              )
             }
 
           </div>
@@ -314,7 +327,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* TRANSACTIONS */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm">
+        <div className="bg-white rounded-3xl p-5 shadow-sm overflow-hidden">
 
           <h2 className="text-xl font-bold text-[#2E1065]">
 
@@ -326,59 +339,72 @@ const AdminDashboard = () => {
 
             {
               dashboardData?.recentTransactions
-                ?.map(
-                  (
-                    item,
-                    index
-                  ) => (
+                ?.length === 0 ? (
 
-                    <div
-                      key={index}
-                      className="flex items-center justify-between border border-gray-100 rounded-2xl p-4"
-                    >
+                <p className="text-gray-500">
 
-                      <div>
+                  No transactions found
 
-                        <h3 className="font-semibold text-sm md:text-base text-[#2E1065]">
+                </p>
 
-                          {
-                            item.title
-                          }
+              ) : (
 
-                        </h3>
+                dashboardData?.recentTransactions
+                  ?.map(
+                    (
+                      item,
+                      index
+                    ) => (
 
-                        <p className={`text-xs md:text-sm capitalize ${
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-4 border border-gray-100 rounded-2xl p-4 overflow-hidden"
+                      >
+
+                        <div className="min-w-0 flex-1">
+
+                          <h3 className="font-semibold text-sm md:text-base text-[#2E1065] break-words">
+
+                            {
+                              item.title
+                            }
+
+                          </h3>
+
+                          <p className={`text-xs md:text-sm capitalize break-words ${
+                            item.type ===
+                            "income"
+                              ? "text-green-600"
+                              : "text-red-500"
+                          }`}>
+
+                            {
+                              item.type
+                            }
+
+                          </p>
+
+                        </div>
+
+                        <h2 className={`text-lg md:text-2xl font-bold shrink-0 ${
                           item.type ===
                           "income"
                             ? "text-green-600"
                             : "text-red-500"
                         }`}>
 
-                          {
-                            item.type
+                          ₹{
+                            item.amount
                           }
 
-                        </p>
+                        </h2>
 
                       </div>
 
-                      <h2 className={`text-lg md:text-2xl font-bold ${
-                        item.type ===
-                        "income"
-                          ? "text-green-600"
-                          : "text-red-500"
-                      }`}>
-
-                        ₹{
-                          item.amount
-                        }
-
-                      </h2>
-
-                    </div>
-
+                    )
                   )
-                )
+
+              )
             }
 
           </div>

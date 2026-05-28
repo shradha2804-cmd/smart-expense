@@ -44,7 +44,9 @@ const UserLayout = () => {
 
       } catch (error) {
 
-        console.log(error);
+        console.log(
+          error
+        );
 
       }
 
@@ -54,7 +56,7 @@ const UserLayout = () => {
 
     fetchUnreadNotifications();
 
-    // LIVE UPDATE
+    // LIVE UPDATE EVENT
     const updateNotifications =
       () => {
 

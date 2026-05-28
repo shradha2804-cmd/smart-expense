@@ -22,6 +22,14 @@ const Expenses = () => {
     setExpenses] =
     useState([]);
 
+  const [loading,
+    setLoading] =
+    useState(true);
+
+  const [submitting,
+    setSubmitting] =
+    useState(false);
+
   const [title,
     setTitle] =
     useState("");
@@ -57,6 +65,10 @@ const Expenses = () => {
           "Failed to load expenses"
         );
 
+      } finally {
+
+        setLoading(false);
+
       }
 
     };
@@ -75,6 +87,8 @@ const Expenses = () => {
 
       try {
 
+        setSubmitting(true);
+
         await API.post(
           "/expenses",
           {
@@ -91,7 +105,15 @@ const Expenses = () => {
 
         setShowModal(false);
 
-        fetchExpenses();
+        // REFRESH DATA
+        await fetchExpenses();
+
+        // UPDATE NOTIFICATIONS
+        window.dispatchEvent(
+          new Event(
+            "notificationUpdate"
+          )
+        );
 
         // RESET
         setTitle("");
@@ -109,6 +131,10 @@ const Expenses = () => {
             ?.message ||
             "Failed to add expense"
         );
+
+      } finally {
+
+        setSubmitting(false);
 
       }
 
@@ -128,6 +154,7 @@ const Expenses = () => {
           "Expense Deleted"
         );
 
+        // REFRESH
         fetchExpenses();
 
       } catch (error) {
@@ -139,6 +166,18 @@ const Expenses = () => {
       }
 
     };
+
+  if (loading) {
+
+    return (
+      <div className="text-center py-20 text-xl font-bold text-[#0B132B]">
+
+        Loading...
+
+      </div>
+    );
+
+  }
 
   return (
     <section>
@@ -201,78 +240,90 @@ const Expenses = () => {
         <div>
 
           {
-            expenses.map(
-              (item) => (
+            expenses.length === 0 ? (
 
-                <div
-                  key={item._id}
-                  className="grid md:grid-cols-5 gap-4 p-5 border-t border-gray-100 items-center"
-                >
+              <div className="p-10 text-center text-gray-500">
 
-                  <div>
+                No expenses found
 
-                    <p className="font-semibold text-[#0B132B]">
+              </div>
 
-                      {item.title}
+            ) : (
 
-                    </p>
+              expenses.map(
+                (item) => (
+
+                  <div
+                    key={item._id}
+                    className="grid md:grid-cols-5 gap-4 p-5 border-t border-gray-100 items-center"
+                  >
+
+                    <div>
+
+                      <p className="font-semibold text-[#0B132B] break-words">
+
+                        {item.title}
+
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="text-gray-500 break-words">
+
+                        {item.category}
+
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="font-bold text-red-600">
+
+                        ₹{item.amount}
+
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="text-gray-500">
+
+                        {
+                          new Date(
+                            item.date
+                          ).toLocaleDateString()
+                        }
+
+                      </p>
+
+                    </div>
+
+                    <div className="flex justify-center">
+
+                      <button
+                        onClick={() =>
+                          handleDelete(
+                            item._id
+                          )
+                        }
+                        className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"
+                      >
+
+                        <FaTrash />
+
+                      </button>
+
+                    </div>
 
                   </div>
 
-                  <div>
-
-                    <p className="text-gray-500">
-
-                      {item.category}
-
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="font-bold text-red-600">
-
-                      ₹{item.amount}
-
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="text-gray-500">
-
-                      {
-                        new Date(
-                          item.date
-                        ).toLocaleDateString()
-                      }
-
-                    </p>
-
-                  </div>
-
-                  <div className="flex justify-center">
-
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          item._id
-                        )
-                      }
-                      className="h-10 w-10 rounded-xl bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"
-                    >
-
-                      <FaTrash />
-
-                    </button>
-
-                  </div>
-
-                </div>
-
+                )
               )
+
             )
           }
 
@@ -326,6 +377,7 @@ const Expenses = () => {
                     )
                   }
                   className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                  required
                 />
 
                 <input
@@ -338,6 +390,7 @@ const Expenses = () => {
                     )
                   }
                   className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                  required
                 />
 
                 <input
@@ -350,6 +403,7 @@ const Expenses = () => {
                     )
                   }
                   className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                  required
                 />
 
                 <input
@@ -361,11 +415,19 @@ const Expenses = () => {
                     )
                   }
                   className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+                  required
                 />
 
-                <button className="w-full bg-red-600 text-white py-3 rounded-2xl hover:bg-red-700 transition">
+                <button
+                  disabled={submitting}
+                  className="w-full bg-red-600 text-white py-3 rounded-2xl hover:bg-red-700 transition disabled:opacity-70"
+                >
 
-                  Save Expense
+                  {
+                    submitting
+                      ? "Saving..."
+                      : "Save Expense"
+                  }
 
                 </button>
 

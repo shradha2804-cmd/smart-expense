@@ -1,62 +1,52 @@
 import mongoose from "mongoose";
 
-const userSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-
-    phone: {
-      type: String,
-      default: "",
-    },
-
-    profileImage: {
-      type: String,
-      default: "",
-    },
-    
-    isAdmin: {
-  type: Boolean,
-  default: false,
-},
-    notifications: [
-      {
-        message: String,
-
-        read: {
-          type: Boolean,
-          default: false,
-        },
-
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
+const userSchema =
+  mongoose.Schema(
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
       },
-    ],
-  },
 
-  {
-    timestamps: true,
-  }
-);
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+      },
 
-const User = mongoose.model(
-  "User",
-  userSchema
-);
+      password: {
+        type: String,
+        required: true,
+      },
+
+      phone: {
+        type: String,
+        default: "",
+      },
+
+      profileImage: {
+        type: String,
+        default: "",
+      },
+
+      isAdmin: {
+        type: Boolean,
+        default: false,
+      },
+    },
+
+    {
+      timestamps: true,
+    }
+  );
+
+const User =
+  mongoose.model(
+    "User",
+    userSchema
+  );
 
 export default User;

@@ -30,19 +30,19 @@ const AnalyticsCharts = ({
     <div className="grid xl:grid-cols-2 gap-6">
 
       {/* PIE CHART */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
+      <div className="bg-white rounded-3xl p-6 shadow-sm overflow-hidden">
 
-        <h2 className="text-2xl font-bold text-[#0B132B]">
+        <h2 className="text-2xl font-bold text-[#0B132B] break-words">
 
           Expense Categories
 
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-8 w-full overflow-hidden">
 
           {pieChartData.length === 0 ? (
 
-            <div className="h-[350px] flex items-center justify-center text-gray-500">
+            <div className="h-[350px] flex items-center justify-center text-gray-500 text-center px-4">
 
               No expense data found
 
@@ -96,19 +96,19 @@ const AnalyticsCharts = ({
       </div>
 
       {/* BAR CHART */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
+      <div className="bg-white rounded-3xl p-6 shadow-sm overflow-hidden">
 
-        <h2 className="text-2xl font-bold text-[#0B132B]">
+        <h2 className="text-2xl font-bold text-[#0B132B] break-words">
 
           Monthly Overview
 
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-8 w-full overflow-x-auto">
 
           {barChartData.length === 0 ? (
 
-            <div className="h-[350px] flex items-center justify-center text-gray-500">
+            <div className="h-[350px] flex items-center justify-center text-gray-500 text-center px-4">
 
               No monthly data found
 
@@ -121,13 +121,30 @@ const AnalyticsCharts = ({
               height={350}
             >
 
-              <BarChart data={barChartData}>
+              <BarChart
+                data={barChartData}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: -15,
+                  bottom: 0,
+                }}
+              >
 
                 <CartesianGrid strokeDasharray="3 3" />
 
-                <XAxis dataKey="month" />
+                <XAxis
+                  dataKey="month"
+                  tick={{
+                    fontSize: 12,
+                  }}
+                />
 
-                <YAxis />
+                <YAxis
+                  tick={{
+                    fontSize: 12,
+                  }}
+                />
 
                 <Tooltip />
 

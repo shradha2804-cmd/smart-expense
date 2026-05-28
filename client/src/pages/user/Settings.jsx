@@ -84,67 +84,71 @@ const Settings = () => {
   }, []);
 
   // IMAGE UPLOAD
- const uploadImage = async (
-  e
-) => {
+  const uploadImage = async (
+    e
+  ) => {
 
-  const file =
-    e.target.files[0];
+    const file =
+      e.target.files[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  try {
+    try {
 
-    setLoadingImage(true);
+      setLoadingImage(true);
 
-    const formData =
-      new FormData();
+      const formData =
+        new FormData();
 
-    formData.append(
-      "profileImage",
-      file
-    );
-
-    const { data } =
-      await API.put(
-        "/users/profile",
-        formData,
-        {
-          headers: {
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
+      formData.append(
+        "profileImage",
+        file
       );
 
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify(data)
-    );
+      const { data } =
+        await API.put(
+          "/users/profile",
+          formData,
+          {
+            headers: {
+              "Content-Type":
+                "multipart/form-data",
+            },
+          }
+        );
 
-    setProfileImage(
-      data.profileImage
-    );
+      setProfileImage(
+        data.profileImage
+      );
 
-    toast.success(
-      "Profile image updated"
-    );
+      toast.success(
+        "Profile image updated"
+      );
 
-    window.location.reload();
+      // REFRESH PROFILE
+      fetchProfile();
 
-  } catch (error) {
+      // UPDATE NAVBAR
+      window.dispatchEvent(
+        new Event(
+          "profileUpdated"
+        )
+      );
 
-    toast.error(
-      "Image upload failed"
-    );
+    } catch (error) {
 
-  } finally {
+      toast.error(
+        "Image upload failed"
+      );
 
-    setLoadingImage(false);
+    } finally {
 
-  }
+      setLoadingImage(false);
 
-};
+    }
+
+  };
+
   // UPDATE PROFILE
   const handleProfileUpdate =
     async (e) => {
@@ -153,23 +157,27 @@ const Settings = () => {
 
       try {
 
-        const { data } =
-          await API.put(
-            "/users/profile",
-            {
-              name,
-              phone,
-              profileImage,
-            }
-          );
-
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(data)
+        await API.put(
+          "/users/profile",
+          {
+            name,
+            phone,
+            profileImage,
+          }
         );
 
         toast.success(
           "Profile Updated"
+        );
+
+        // REFRESH PROFILE
+        fetchProfile();
+
+        // UPDATE NAVBAR
+        window.dispatchEvent(
+          new Event(
+            "profileUpdated"
+          )
         );
 
       } catch (error) {
@@ -251,85 +259,86 @@ const Settings = () => {
           onSubmit={handleProfileUpdate}
           className="mt-8"
         >
-{/* PROFILE */}
-<div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
 
-  {/* HIDDEN INPUT */}
-  <input
-    type="file"
-    accept="image/*"
-    id="profileUpload"
-    onChange={uploadImage}
-    className="hidden"
-  />
+          {/* PROFILE */}
+          <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
 
-  {/* PROFILE IMAGE */}
-  <div
-    onClick={() =>
-      document
-        .getElementById(
-          "profileUpload"
-        )
-        .click()
-    }
-    className="cursor-pointer relative group"
-  >
+            {/* HIDDEN INPUT */}
+            <input
+              type="file"
+              accept="image/*"
+              id="profileUpload"
+              onChange={uploadImage}
+              className="hidden"
+            />
 
-    {profileImage ? (
+            {/* PROFILE IMAGE */}
+            <div
+              onClick={() =>
+                document
+                  .getElementById(
+                    "profileUpload"
+                  )
+                  .click()
+              }
+              className="cursor-pointer relative group"
+            >
 
-      <img
-        src={profileImage}
-        alt=""
-        className="h-28 w-28 rounded-full object-cover border-4 border-blue-100"
-      />
+              {profileImage ? (
 
-    ) : (
+                <img
+                  src={profileImage}
+                  alt=""
+                  className="h-28 w-28 rounded-full object-cover border-4 border-blue-100"
+                />
 
-      <div className="h-28 w-28 rounded-full bg-blue-600 text-white flex items-center justify-center text-5xl font-bold uppercase">
+              ) : (
 
-        {name?.charAt(0)}
+                <div className="h-28 w-28 rounded-full bg-blue-600 text-white flex items-center justify-center text-5xl font-bold uppercase">
 
-      </div>
+                  {name?.charAt(0)}
 
-    )}
+                </div>
 
-    {/* OVERLAY */}
-    <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-sm font-medium">
+              )}
 
-      Change
+              {/* OVERLAY */}
+              <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-sm font-medium">
 
-    </div>
+                Change
 
-  </div>
+              </div>
 
-  {/* INFO */}
-  <div>
+            </div>
 
-    <h3 className="text-xl font-semibold text-[#0B132B]">
+            {/* INFO */}
+            <div>
 
-      {name}
+              <h3 className="text-xl font-semibold text-[#0B132B]">
 
-    </h3>
+                {name}
 
-    <p className="mt-2 text-gray-500">
+              </h3>
 
-      Click profile image to change photo
+              <p className="mt-2 text-gray-500">
 
-    </p>
+                Click profile image to change photo
 
-    {loadingImage && (
+              </p>
 
-      <p className="mt-2 text-blue-600 text-sm">
+              {loadingImage && (
 
-        Uploading image...
+                <p className="mt-2 text-blue-600 text-sm">
 
-      </p>
+                  Uploading image...
 
-    )}
+                </p>
 
-  </div>
+              )}
 
-</div>
+            </div>
+
+          </div>
 
           {/* FORM */}
           <div className="grid md:grid-cols-2 gap-6">

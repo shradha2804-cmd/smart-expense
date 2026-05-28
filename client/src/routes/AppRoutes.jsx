@@ -10,7 +10,6 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import AdminProtectedRoute from "./AdminProtectedRoute";
 
-
 // GUEST LAYOUT
 import GuestLayout from "../layouts/GuestLayout";
 
@@ -23,7 +22,6 @@ import UserLayout from "../layouts/UserLayout";
 // ADMIN LAYOUT
 import AdminLayout from "../layouts/AdminLayout";
 
-
 // GUEST PAGES
 import Home from "../pages/guest/Home";
 import About from "../pages/guest/About";
@@ -32,12 +30,10 @@ import Pricing from "../pages/guest/Pricing";
 import Contact from "../pages/guest/Contact";
 import FAQ from "../pages/guest/FAQ";
 
-
 // AUTH PAGES
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
-
 
 // USER PAGES
 import Dashboard from "../pages/user/Dashboard";
@@ -47,13 +43,12 @@ import Settings from "../pages/user/Settings";
 import Notifications from "../pages/user/Notifications";
 import Analytics from "../pages/user/Analytics";
 
-
 // ADMIN PAGES
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import Users from "../pages/admin/Users";
 import AdminNotifications from "../pages/admin/AdminNotifications";
 import AdminAnalytics from "../pages/admin/AdminAnalytics";
-
+import AdminSettings from "../pages/admin/AdminSettings";
 
 const AppRoutes = () => {
 
@@ -101,7 +96,6 @@ const AppRoutes = () => {
 
         </Route>
 
-
         {/* ================= AUTH ================= */}
         <Route
           path="/"
@@ -124,7 +118,6 @@ const AppRoutes = () => {
           />
 
         </Route>
-
 
         {/* ================= USER ================= */}
         <Route
@@ -170,7 +163,6 @@ const AppRoutes = () => {
 
         </Route>
 
-
         {/* ================= ADMIN ================= */}
         <Route
           element={
@@ -205,6 +197,13 @@ const AppRoutes = () => {
               path="/admin/analytics"
               element={
                 <AdminAnalytics />
+              }
+            />
+
+            <Route
+              path="/admin/settings"
+              element={
+                <AdminSettings />
               }
             />
 

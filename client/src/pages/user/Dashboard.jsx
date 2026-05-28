@@ -15,47 +15,94 @@ import toast from "react-hot-toast";
 
 import API from "../../utils/api";
 
-import getUser from "../../utils/getUser";
-
 const Dashboard = () => {
 
-  const user = getUser();
+  const [user,
+    setUser] =
+    useState(null);
 
- const [dashboardData, setDashboardData] =
-  useState({
-    totalBalance: 0,
-    totalIncome: 0,
-    totalExpense: 0,
-    recentTransactions: [],
-    pieChartData: [],
-    barChartData: [],
-  });
+  const [loading,
+    setLoading] =
+    useState(true);
+
+  const [dashboardData,
+    setDashboardData] =
+    useState({
+      totalBalance: 0,
+      totalIncome: 0,
+      totalExpense: 0,
+      recentTransactions: [],
+      pieChartData: [],
+      barChartData: [],
+    });
+
+  // FETCH PROFILE
+  const fetchProfile =
+    async () => {
+
+      try {
+
+        const { data } =
+          await API.get(
+            "/users/profile"
+          );
+
+        setUser(data);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
 
   // FETCH DASHBOARD
-  const fetchDashboard = async () => {
+  const fetchDashboard =
+    async () => {
 
-    try {
+      try {
 
-      const { data } =
-        await API.get("/dashboard");
+        const { data } =
+          await API.get(
+            "/dashboard"
+          );
 
-      setDashboardData(data);
+        setDashboardData(data);
 
-    } catch (error) {
+      } catch (error) {
 
-      toast.error(
-        "Failed to load dashboard"
-      );
+        toast.error(
+          "Failed to load dashboard"
+        );
 
-    }
+      } finally {
 
-  };
+        setLoading(false);
+
+      }
+
+    };
 
   useEffect(() => {
+
+    fetchProfile();
 
     fetchDashboard();
 
   }, []);
+
+  if (loading) {
+
+    return (
+      <div className="text-center py-20 text-xl font-bold text-[#0B132B]">
+
+        Loading...
+
+      </div>
+    );
+
+  }
 
   return (
     <section>
@@ -63,7 +110,7 @@ const Dashboard = () => {
       {/* TOP */}
       <div className="mb-8">
 
-        <h1 className="text-4xl font-bold text-[#0B132B]">
+        <h1 className="text-4xl font-bold text-[#0B132B] break-words">
 
           Hello, {user?.name} 👋
 
@@ -83,15 +130,17 @@ const Dashboard = () => {
         {/* BALANCE */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500">
+
                 Total Balance
+
               </p>
 
-              <h2 className="mt-3 text-4xl font-bold text-[#0B132B]">
+              <h2 className="mt-3 text-4xl font-bold text-[#0B132B] break-words">
 
                 ₹
                 {dashboardData.totalBalance}
@@ -100,7 +149,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className="h-16 w-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl">
+            <div className="h-16 w-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl shrink-0">
 
               <FaWallet />
 
@@ -113,15 +162,17 @@ const Dashboard = () => {
         {/* INCOME */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500">
+
                 Total Income
+
               </p>
 
-              <h2 className="mt-3 text-4xl font-bold text-green-600">
+              <h2 className="mt-3 text-4xl font-bold text-green-600 break-words">
 
                 ₹
                 {dashboardData.totalIncome}
@@ -130,7 +181,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className="h-16 w-16 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl">
+            <div className="h-16 w-16 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl shrink-0">
 
               <FaArrowUp />
 
@@ -143,15 +194,17 @@ const Dashboard = () => {
         {/* EXPENSE */}
         <div className="bg-white rounded-3xl p-6 shadow-sm">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
 
-            <div>
+            <div className="min-w-0">
 
               <p className="text-gray-500">
+
                 Total Expenses
+
               </p>
 
-              <h2 className="mt-3 text-4xl font-bold text-red-500">
+              <h2 className="mt-3 text-4xl font-bold text-red-500 break-words">
 
                 ₹
                 {dashboardData.totalExpense}
@@ -160,7 +213,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className="h-16 w-16 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-3xl">
+            <div className="h-16 w-16 rounded-2xl bg-red-100 text-red-500 flex items-center justify-center text-3xl shrink-0">
 
               <FaArrowDown />
 
@@ -173,7 +226,7 @@ const Dashboard = () => {
       </div>
 
       {/* TRANSACTIONS */}
-      <div className="mt-8 bg-white rounded-3xl shadow-sm p-6">
+      <div className="mt-8 bg-white rounded-3xl shadow-sm p-6 overflow-hidden">
 
         <h2 className="text-2xl font-bold text-[#0B132B]">
 
@@ -183,79 +236,83 @@ const Dashboard = () => {
 
         <div className="mt-6 space-y-4">
 
-          {dashboardData.recentTransactions
-            .length === 0 ? (
+          {
+            dashboardData.recentTransactions
+              .length === 0 ? (
 
-            <p className="text-gray-500">
+              <p className="text-gray-500">
 
-              No transactions found
+                No transactions found
 
-            </p>
+              </p>
 
-          ) : (
+            ) : (
 
-            dashboardData.recentTransactions.map(
-              (item, index) => (
+              dashboardData.recentTransactions.map(
+                (item, index) => (
 
-                <div
-                  key={index}
-                  className="flex items-center justify-between bg-[#F5F7FF] p-4 rounded-2xl"
-                >
+                  <div
+                    key={index}
+                    className="flex items-center justify-between gap-4 bg-[#F5F7FF] p-4 rounded-2xl"
+                  >
 
-                  <div>
+                    <div className="min-w-0">
 
-                    <h3 className="font-semibold text-[#0B132B]">
+                      <h3 className="font-semibold text-[#0B132B] break-words">
 
-                      {item.title}
+                        {item.title}
 
-                    </h3>
+                      </h3>
 
-                    <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-gray-500 mt-1 break-words">
 
-                      {item.type}
+                        {item.type}
 
-                    </p>
+                      </p>
+
+                    </div>
+
+                    <h2
+                      className={`font-bold text-lg shrink-0 ${
+                        item.type === "income"
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }`}
+                    >
+
+                      {
+                        item.type === "income"
+                          ? "+"
+                          : "-"
+                      }
+
+                      ₹{item.amount}
+
+                    </h2>
 
                   </div>
 
-                  <h2
-                    className={`font-bold text-lg ${
-                      item.type === "income"
-                        ? "text-green-600"
-                        : "text-red-500"
-                    }`}
-                  >
-
-                    {item.type === "income"
-                      ? "+"
-                      : "-"}
-
-                    ₹{item.amount}
-
-                  </h2>
-
-                </div>
-
+                )
               )
-            )
 
-          )}
+            )
+          }
 
         </div>
 
         {/* CHARTS */}
-      <div className="mt-8">
+        <div className="mt-8 overflow-x-auto">
 
-      <AnalyticsCharts
-        pieChartData={
-        dashboardData.pieChartData
-        }
-        barChartData={
-         dashboardData.barChartData
-      }
-      />
+          <AnalyticsCharts
+            pieChartData={
+              dashboardData.pieChartData
+            }
+            barChartData={
+              dashboardData.barChartData
+            }
+          />
 
-</div>
+        </div>
 
       </div>
 

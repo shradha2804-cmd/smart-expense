@@ -1,4 +1,11 @@
-import React from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
+import API from "../../utils/api";
+
+import toast from "react-hot-toast";
 
 import {
   ResponsiveContainer,
@@ -20,51 +27,89 @@ const COLORS = [
   "#2563EB",
 ];
 
-const data = [
-  {
-    name: "Users",
-    value: 120,
-  },
-
-  {
-    name: "Income",
-    value: 500,
-  },
-
-  {
-    name: "Expenses",
-    value: 320,
-  },
-];
-
-const monthly = [
-  {
-    month: "Jan",
-    income: 400,
-    expense: 240,
-  },
-
-  {
-    month: "Feb",
-    income: 300,
-    expense: 180,
-  },
-
-  {
-    month: "Mar",
-    income: 500,
-    expense: 260,
-  },
-
-  {
-    month: "Apr",
-    income: 700,
-    expense: 390,
-  },
-];
-
 const AdminAnalytics =
   () => {
+
+    const [loading,
+      setLoading] =
+      useState(true);
+
+    const [overviewData,
+      setOverviewData] =
+      useState([]);
+
+    const [monthlyData,
+      setMonthlyData] =
+      useState([]);
+
+    // FETCH ANALYTICS
+    const fetchAnalytics =
+      async () => {
+
+        try {
+
+          const { data } =
+            await API.get(
+              "/admin/dashboard"
+            );
+
+          // PIE DATA
+          setOverviewData([
+            {
+              name: "Users",
+              value:
+                data.totalUsers || 0,
+            },
+
+            {
+              name: "Income",
+              value:
+                data.totalIncome || 0,
+            },
+
+            {
+              name: "Expenses",
+              value:
+                data.totalExpenses || 0,
+            },
+          ]);
+
+          // MONTHLY DATA
+          setMonthlyData(
+            data.monthlyData || []
+          );
+
+        } catch (error) {
+
+          toast.error(
+            "Failed to load analytics"
+          );
+
+        } finally {
+
+          setLoading(false);
+
+        }
+
+      };
+
+    useEffect(() => {
+
+      fetchAnalytics();
+
+    }, []);
+
+    if (loading) {
+
+      return (
+        <div className="text-center py-20 text-xl font-bold text-[#2E1065]">
+
+          Loading...
+
+        </div>
+      );
+
+    }
 
     return (
       <section>
@@ -72,7 +117,7 @@ const AdminAnalytics =
         {/* TOP */}
         <div>
 
-          <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065]">
+          <h1 className="text-2xl md:text-4xl font-bold text-[#2E1065] break-words">
 
             Analytics
 
@@ -90,7 +135,7 @@ const AdminAnalytics =
         <div className="grid xl:grid-cols-2 gap-6 mt-8">
 
           {/* PIE */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
+          <div className="bg-white rounded-3xl p-6 shadow-sm overflow-hidden">
 
             <h2 className="text-xl font-bold text-[#2E1065]">
 
@@ -98,56 +143,70 @@ const AdminAnalytics =
 
             </h2>
 
-            <div className="mt-6 h-[350px]">
+            <div className="mt-6 h-[350px] w-full overflow-hidden">
 
-              <ResponsiveContainer>
+              {
+                overviewData.length === 0 ? (
 
-                <PieChart>
+                  <div className="h-full flex items-center justify-center text-gray-500 text-center px-4">
 
-                  <Pie
-                    data={data}
-                    dataKey="value"
-                    outerRadius={120}
-                    label
-                  >
+                    No analytics data found
 
-                    {
-                      data.map(
-                        (
-                          entry,
-                          index
-                        ) => (
+                  </div>
 
-                          <Cell
-                            key={
+                ) : (
+
+                  <ResponsiveContainer>
+
+                    <PieChart>
+
+                      <Pie
+                        data={overviewData}
+                        dataKey="value"
+                        outerRadius={120}
+                        label
+                      >
+
+                        {
+                          overviewData.map(
+                            (
+                              entry,
                               index
-                            }
-                            fill={
-                              COLORS[
-                                index %
-                                COLORS.length
-                              ]
-                            }
-                          />
+                            ) => (
 
-                        )
-                      )
-                    }
+                              <Cell
+                                key={
+                                  index
+                                }
+                                fill={
+                                  COLORS[
+                                    index %
+                                    COLORS.length
+                                  ]
+                                }
+                              />
 
-                  </Pie>
+                            )
+                          )
+                        }
 
-                  <Tooltip />
+                      </Pie>
 
-                </PieChart>
+                      <Tooltip />
 
-              </ResponsiveContainer>
+                    </PieChart>
+
+                  </ResponsiveContainer>
+
+                )
+              }
 
             </div>
 
           </div>
 
           {/* BAR */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
+          <div className="bg-white rounded-3xl p-6 shadow-sm overflow-hidden">
 
             <h2 className="text-xl font-bold text-[#2E1065]">
 
@@ -155,47 +214,76 @@ const AdminAnalytics =
 
             </h2>
 
-            <div className="mt-6 h-[350px]">
+            <div className="mt-6 h-[350px] w-full overflow-x-auto">
 
-              <ResponsiveContainer>
+              {
+                monthlyData.length === 0 ? (
 
-                <BarChart
-                  data={monthly}
-                >
+                  <div className="h-full flex items-center justify-center text-gray-500 text-center px-4">
 
-                  <CartesianGrid strokeDasharray="3 3" />
+                    No monthly analytics found
 
-                  <XAxis dataKey="month" />
+                  </div>
 
-                  <YAxis />
+                ) : (
 
-                  <Tooltip />
+                  <ResponsiveContainer>
 
-                  <Bar
-                    dataKey="income"
-                    fill="#16A34A"
-                    radius={[
-                      10,
-                      10,
-                      0,
-                      0,
-                    ]}
-                  />
+                    <BarChart
+                      data={monthlyData}
+                      margin={{
+                        top: 10,
+                        right: 10,
+                        left: -15,
+                        bottom: 0,
+                      }}
+                    >
 
-                  <Bar
-                    dataKey="expense"
-                    fill="#DC2626"
-                    radius={[
-                      10,
-                      10,
-                      0,
-                      0,
-                    ]}
-                  />
+                      <CartesianGrid strokeDasharray="3 3" />
 
-                </BarChart>
+                      <XAxis
+                        dataKey="month"
+                        tick={{
+                          fontSize: 12,
+                        }}
+                      />
 
-              </ResponsiveContainer>
+                      <YAxis
+                        tick={{
+                          fontSize: 12,
+                        }}
+                      />
+
+                      <Tooltip />
+
+                      <Bar
+                        dataKey="income"
+                        fill="#16A34A"
+                        radius={[
+                          10,
+                          10,
+                          0,
+                          0,
+                        ]}
+                      />
+
+                      <Bar
+                        dataKey="expense"
+                        fill="#DC2626"
+                        radius={[
+                          10,
+                          10,
+                          0,
+                          0,
+                        ]}
+                      />
+
+                    </BarChart>
+
+                  </ResponsiveContainer>
+
+                )
+              }
 
             </div>
 

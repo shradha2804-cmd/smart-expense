@@ -27,8 +27,13 @@ const AdminSidebar = ({
   const logoutHandler =
     () => {
 
+      // REMOVE ONLY AUTH DATA
       localStorage.removeItem(
-        "adminInfo"
+        "token"
+      );
+
+      localStorage.removeItem(
+        "isAdmin"
       );
 
       navigate("/login");
@@ -155,6 +160,11 @@ const AdminSidebar = ({
                 <NavLink
                   key={index}
                   to={item.path}
+                  onClick={() =>
+                    setSidebarOpen(
+                      false
+                    )
+                  }
                   className={({ isActive }) =>
                     `flex items-center gap-4 px-5 py-4 rounded-2xl transition text-lg
                     ${

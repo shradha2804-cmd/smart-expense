@@ -41,6 +41,13 @@ const Notifications = () => {
           data
         );
 
+        // UPDATE GLOBAL NOTIFICATION STATE
+        window.dispatchEvent(
+          new Event(
+            "notificationUpdate"
+          )
+        );
+
       } catch (error) {
 
         toast.error(
@@ -67,27 +74,25 @@ const Notifications = () => {
 
       try {
 
+        // OPTIMISTIC UPDATE
+        setNotifications(
+          (prev) =>
+            prev.map(
+              (item) =>
+                item._id === id
+                  ? {
+                      ...item,
+                      isRead: true,
+                    }
+                  : item
+            )
+        );
+
         await API.put(
           `/notifications/${id}/read`
         );
 
-        // UPDATE UI
-        const updated =
-          notifications.map(
-            (item) =>
-              item._id === id
-                ? {
-                    ...item,
-                    isRead: true,
-                  }
-                : item
-          );
-
-        setNotifications(
-          updated
-        );
-
-        // UPDATE RED DOT
+        // UPDATE NAVBAR RED DOT
         window.dispatchEvent(
           new Event(
             "notificationUpdate"
@@ -96,7 +101,12 @@ const Notifications = () => {
 
       } catch (error) {
 
-        console.log(error);
+        console.log(
+          error
+        );
+
+        // REFRESH BACK IF ERROR
+        fetchNotifications();
 
       }
 
@@ -185,6 +195,13 @@ const Notifications = () => {
 
   };
 
+  // UNREAD COUNT
+  const unreadCount =
+    notifications.filter(
+      (item) =>
+        !item.isRead
+    ).length;
+
   if (loading) {
 
     return (
@@ -222,13 +239,7 @@ const Notifications = () => {
         {/* UNREAD */}
         <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-semibold shadow-md w-fit">
 
-          {
-            notifications.filter(
-              (item) =>
-                !item.isRead
-            ).length
-          }{" "}
-          Unread
+          {unreadCount} Unread
 
         </div>
 
@@ -269,11 +280,12 @@ const Notifications = () => {
                     <div
                       key={item._id}
                       onClick={() =>
+                        !item.isRead &&
                         markAsRead(
                           item._id
                         )
                       }
-                      className={`w-full max-w-full flex flex-col sm:flex-row items-start gap-4 border rounded-3xl p-4 md:p-5 transition cursor-pointer overflow-hidden break-all
+                      className={`w-full max-w-full flex flex-col sm:flex-row items-start gap-4 border rounded-3xl p-4 md:p-5 transition cursor-pointer overflow-hidden break-words
                       ${
                         item.isRead
                           ? "bg-gray-50 border-gray-100 opacity-70"
@@ -294,7 +306,8 @@ const Notifications = () => {
 
                           <div className="min-w-0 flex-1">
 
-                            <h3 className="text-sm md:text-base font-semibold text-[#0B132B] leading-relaxed break-all whitespace-pre-wrap w-full overflow-hidden">
+                            <h3 className="text-sm md:text-base font-semibold text-[#0B132B] leading-relaxed break-words whitespace-normal w-full overflow-hidden">
+
                               {item.message}
 
                             </h3>

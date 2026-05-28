@@ -23,8 +23,13 @@ const Sidebar = ({
   // LOGOUT
   const logoutHandler = () => {
 
+    // REMOVE ONLY AUTH DATA
     localStorage.removeItem(
-      "userInfo"
+      "token"
+    );
+
+    localStorage.removeItem(
+      "isAdmin"
     );
 
     navigate("/login");
