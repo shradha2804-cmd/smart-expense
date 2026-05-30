@@ -8,7 +8,13 @@ import nodemailer from "nodemailer";
 const transporter =
   nodemailer.createTransport({
 
-    service: "gmail",
+    host: "smtp.gmail.com",
+
+    port: 587,
+
+    secure: false,
+
+    requireTLS: true,
 
     auth: {
       user:
@@ -16,10 +22,6 @@ const transporter =
 
       pass:
         process.env.EMAIL_PASS,
-    },
-
-    tls: {
-      rejectUnauthorized: false,
     },
 
   });
@@ -51,7 +53,9 @@ const sendEmail =
         "EMAIL SENT SUCCESSFULLY"
       );
 
-      console.log(info.response);
+      console.log(
+        info.response
+      );
 
     } catch (error) {
 
@@ -60,6 +64,8 @@ const sendEmail =
       );
 
       console.log(error);
+
+      throw error;
 
     }
 
