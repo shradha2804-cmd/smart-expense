@@ -2,29 +2,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// CREATE TRANSPORTER
-const transporter =
-  nodemailer.createTransport({
-
-    host: "smtp.gmail.com",
-
-    port: 587,
-
-    secure: false,
-
-    requireTLS: true,
-
-    auth: {
-      user:
-        process.env.EMAIL_USER,
-
-      pass:
-        process.env.EMAIL_PASS,
-    },
-
-  });
+const resend =
+  new Resend(
+    process.env.RESEND_API_KEY
+  );
 
 // SEND EMAIL
 const sendEmail =
@@ -36,10 +19,11 @@ const sendEmail =
 
     try {
 
-      const info =
-        await transporter.sendMail({
+      const response =
+        await resend.emails.send({
 
-          from: `"Finora" <${process.env.EMAIL_USER}>`,
+          from:
+            "Finora <onboarding@resend.dev>",
 
           to,
 
@@ -54,7 +38,7 @@ const sendEmail =
       );
 
       console.log(
-        info.response
+        response
       );
 
     } catch (error) {
