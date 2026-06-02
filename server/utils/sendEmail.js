@@ -2,12 +2,29 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend =
-  new Resend(
-    process.env.RESEND_API_KEY
-  );
+// CREATE TRANSPORTER
+const transporter =
+  nodemailer.createTransport({
+
+    host: "smtp-relay.brevo.com",
+
+    port: 587,
+
+    secure: false,
+
+    auth: {
+
+      user:
+        process.env.BREVO_EMAIL,
+
+      pass:
+        process.env.BREVO_SMTP_KEY,
+
+    },
+
+  });
 
 // SEND EMAIL
 const sendEmail =
@@ -19,11 +36,11 @@ const sendEmail =
 
     try {
 
-      const response =
-        await resend.emails.send({
+      const info =
+        await transporter.sendMail({
 
           from:
-            "Finora <onboarding@resend.dev>",
+            `"Finora" <${process.env.BREVO_EMAIL}>`,
 
           to,
 
@@ -38,7 +55,7 @@ const sendEmail =
       );
 
       console.log(
-        response
+        info.response
       );
 
     } catch (error) {
