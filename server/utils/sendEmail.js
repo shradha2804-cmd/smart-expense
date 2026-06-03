@@ -2,29 +2,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-// CREATE TRANSPORTER
-const transporter =
-  nodemailer.createTransport({
+// CONFIGURE BREVO API
+const defaultClient =
+  SibApiV3Sdk.ApiClient.instance;
 
-    host: "smtp-relay.brevo.com",
+const apiKey =
+  defaultClient.authentications["api-key"];
 
-    port: 587,
+apiKey.apiKey =
+  process.env.BREVO_API_KEY;
 
-    secure: false,
-
-    auth: {
-
-      user:
-        process.env.BREVO_EMAIL,
-
-      pass:
-        process.env.BREVO_SMTP_KEY,
-
-    },
-
-  });
+const apiInstance =
+  new SibApiV3Sdk.TransactionalEmailsApi();
 
 // SEND EMAIL
 const sendEmail =
@@ -36,17 +27,25 @@ const sendEmail =
 
     try {
 
-      const info =
-        await transporter.sendMail({
+      const result =
+        await apiInstance.sendTransacEmail({
 
-          from:
-            `"Finora" <${process.env.BREVO_EMAIL}>`,
+          sender: {
+            email:
+              process.env.BREVO_EMAIL,
+            name:
+              "Finora",
+          },
 
-          to,
+          to: [
+            {
+              email: to,
+            },
+          ],
 
           subject,
 
-          html,
+          htmlContent: html,
 
         });
 
@@ -55,7 +54,7 @@ const sendEmail =
       );
 
       console.log(
-        info.response
+        result
       );
 
     } catch (error) {
