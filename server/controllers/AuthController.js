@@ -123,61 +123,116 @@ export const registerUser =
 
           html: `
 
-          <div style="font-family:Arial,sans-serif;padding:40px;background:#F5F7FF;">
+  <div style="margin:0;padding:0;background:#f4f7ff;font-family:Arial,sans-serif;">
 
-            <div style="max-width:600px;margin:auto;background:white;border-radius:20px;overflow:hidden;">
+  <div style="max-width:650px;margin:40px auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
 
-              <div style="background:#2563EB;padding:40px;text-align:center;">
+  <div style="background:linear-gradient(135deg,#2563EB,#1E40AF);padding:40px;text-align:center;">
 
-                <h1 style="color:white;margin:0;">
+  <h1 style="margin:0;color:#ffffff;font-size:34px;">
+    💰 Finora
+  </h1>
 
-                  Finora
+  <p style="margin-top:10px;color:#dbeafe;font-size:16px;">
+    Smart Expense Management System
+  </p>
 
-                </h1>
+</div>
 
-              </div>
+<div style="padding:40px;">
 
-              <div style="padding:40px;">
+  <h2 style="color:#111827;margin-top:0;">
+    Welcome ${name} 👋
+  </h2>
 
-                <h2>
+  <p style="font-size:16px;line-height:1.8;color:#4b5563;">
+    Thank you for joining <strong>Finora</strong>.
+    Your account has been created successfully and you're ready to take control of your finances.
+  </p>
 
-                  Welcome ${name} 👋
+  <div style="background:#eff6ff;border-left:5px solid #2563EB;padding:20px;border-radius:12px;margin:25px 0;">
 
-                </h2>
+    <h3 style="margin-top:0;color:#1E40AF;">
+      Account Details
+    </h3>
 
-                <p style="line-height:1.8;color:#555;">
+    <p style="margin:8px 0;">
+      <strong>Name:</strong> ${name}
+    </p>
 
-                  Your Finora account has been created successfully.
+    <p style="margin:8px 0;">
+      <strong>Email:</strong> ${email}
+    </p>
 
-                </p>
+  </div>
 
-                <div style="text-align:center;margin-top:40px;">
+  <div style="margin-top:30px;">
 
-                  <a
-                    href="${process.env.CLIENT_URL}/login"
-                    style="
-                      background:#2563EB;
-                      color:white;
-                      padding:14px 28px;
-                      border-radius:10px;
-                      text-decoration:none;
-                      font-weight:bold;
-                    "
-                  >
+    <h3 style="color:#111827;">
+      What You Can Do With Finora
+    </h3>
 
-                    Login to Finora
+    <ul style="line-height:2;color:#4b5563;padding-left:20px;">
 
-                  </a>
+      <li>📊 Track expenses and income</li>
 
-                </div>
+      <li>📈 Visualize spending patterns</li>
 
-              </div>
+      <li>💡 Monitor financial growth</li>
 
-            </div>
+      <li>🔔 Receive important notifications</li>
 
-          </div>
+      <li>📱 Access your data anywhere</li>
 
-          `,
+    </ul>
+
+  </div>
+
+  <div style="text-align:center;margin-top:40px;">
+
+    <a
+      href="${process.env.CLIENT_URL}/login"
+      style="
+        display:inline-block;
+        background:#2563EB;
+        color:#ffffff;
+        padding:15px 35px;
+        border-radius:12px;
+        text-decoration:none;
+        font-weight:bold;
+        font-size:16px;
+      "
+    >
+      Login to Finora
+    </a>
+
+  </div>
+
+</div>
+
+<div style="background:#f9fafb;padding:25px;text-align:center;border-top:1px solid #e5e7eb;">
+
+  <p style="margin:0;color:#6b7280;font-size:14px;">
+    Finora Expense Management System
+  </p>
+
+  <p style="margin:10px 0 0;color:#9ca3af;font-size:13px;">
+    Manage Smarter • Save Better • Grow Faster
+  </p>
+
+  <p style="margin-top:15px;font-size:12px;color:#9ca3af;">
+    © 2026 Finora. All Rights Reserved.
+  </p>
+
+  </div>
+
+  </div>
+
+</div>
+
+`,
+
+        
         });
 
       } catch (emailError) {
@@ -339,66 +394,104 @@ export const forgotPassword =
 
         subject:
           "Reset Your Finora Password 🔐",
+    html: `
 
-        html: `
+  <div style="margin:0;padding:0;background:#f4f7ff;font-family:Arial,sans-serif;">
 
-        <div style="font-family:Arial,sans-serif;padding:40px;background:#F5F7FF;">
+  <div style="max-width:650px;margin:40px auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
 
-          <div style="max-width:600px;margin:auto;background:white;border-radius:20px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#DC2626,#B91C1C);padding:40px;text-align:center;">
 
-            <div style="background:#2563EB;padding:40px;text-align:center;">
+  <h1 style="margin:0;color:#ffffff;font-size:34px;">
+    🔐 Finora
+  </h1>
 
-              <h1 style="color:white;margin:0;">
+  <p style="margin-top:10px;color:#FECACA;font-size:16px;">
+    Password Reset Request
+  </p>
 
-                Finora
+</div>
 
-              </h1>
+<div style="padding:40px;">
 
-            </div>
+  <h2 style="color:#111827;">
+    Reset Your Password
+  </h2>
 
-            <div style="padding:40px;">
+  <p style="font-size:16px;line-height:1.8;color:#4b5563;">
 
-              <h2>
+    We received a request to reset your Finora account password.
 
-                Password Reset Request
+  </p>
 
-              </h2>
+  <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:20px;border-radius:12px;margin:25px 0;">
 
-              <p style="line-height:1.8;color:#555;">
+    <strong>Security Notice</strong>
 
-                Click the button below to reset your password.
+    <p style="margin-top:10px;color:#555;">
 
-                This link will expire in 15 minutes.
+      This reset link will expire in 15 minutes.
 
-              </p>
+      If you did not request a password reset, you can safely ignore this email.
 
-              <div style="text-align:center;margin-top:40px;">
+    </p>
 
-                <a
-                  href="${resetUrl}"
-                  style="
-                    background:#2563EB;
-                    color:white;
-                    padding:14px 28px;
-                    border-radius:10px;
-                    text-decoration:none;
-                    font-weight:bold;
-                  "
-                >
+  </div>
 
-                  Reset Password
+  <div style="text-align:center;margin-top:35px;">
 
-                </a>
+    <a
+      href="${resetUrl}"
+      style="
+        display:inline-block;
+        background:#DC2626;
+        color:#ffffff;
+        padding:15px 35px;
+        border-radius:12px;
+        text-decoration:none;
+        font-weight:bold;
+        font-size:16px;
+      "
+    >
+      Reset Password
+    </a>
 
-              </div>
+  </div>
 
-            </div>
+  <p style="margin-top:35px;color:#6b7280;font-size:14px;line-height:1.7;">
 
-          </div>
+    If the button doesn't work, copy and paste this URL into your browser:
 
-        </div>
+  </p>
 
-        `,
+  <p style="word-break:break-all;color:#2563EB;font-size:13px;">
+
+    ${resetUrl}
+
+  </p>
+
+</div>
+
+<div style="background:#f9fafb;padding:25px;text-align:center;border-top:1px solid #e5e7eb;">
+
+  <p style="margin:0;color:#6b7280;font-size:14px;">
+
+    Finora Expense Management System
+
+  </p>
+
+  <p style="margin-top:10px;color:#9ca3af;font-size:12px;">
+
+    Protecting your account security
+
+  </p>
+
+</div>
+
+</div>
+
+`,
+
 
       });
 
