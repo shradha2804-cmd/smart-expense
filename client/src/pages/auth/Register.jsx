@@ -23,21 +23,38 @@ const Register = () => {
     setShowPassword] =
     useState(false);
 
-  const [name,
-    setName] =
-    useState("");
+    const [name,
+  setName] =
+  useState("");
 
-  const [email,
-    setEmail] =
-    useState("");
+const [email,
+  setEmail] =
+  useState("");
 
-  const [phone,
-    setPhone] =
-    useState("");
+const [phone,
+  setPhone] =
+  useState("");
 
-  const [password,
-    setPassword] =
-    useState("");
+const [password,
+  setPassword] =
+  useState("");
+
+const [nameError,
+  setNameError] =
+  useState("");
+
+const [emailError,
+  setEmailError] =
+  useState("");
+
+const [phoneError,
+  setPhoneError] =
+  useState("");
+
+const [passwordError,
+  setPasswordError] =
+  useState("");
+
 
   const [loading,
     setLoading] =
@@ -46,47 +63,229 @@ const Register = () => {
   const navigate =
     useNavigate();
 
+const handleNameChange =
+  (e) => {
+
+    const value =
+      e.target.value;
+
+    setName(value);
+
+    if (!value.trim()) {
+
+      setNameError("");
+
+    }
+
+    else if (
+      !/^[A-Za-z\s]+$/.test(
+        value
+      )
+    ) {
+
+      setNameError(
+        "Only letters and spaces are allowed"
+      );
+
+    }
+
+    else if (
+      value.trim().length < 3
+    ) {
+
+      setNameError(
+        "Name must be at least 3 characters"
+      );
+
+    }
+
+    else {
+
+      setNameError("");
+
+    }
+
+  };
+
+
+const handleEmailChange =
+  (e) => {
+
+    const value =
+      e.target.value;
+
+    setEmail(value);
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!value.trim()) {
+
+  setEmailError("");
+
+}
+
+else if (
+  !emailRegex.test(value)
+) {
+
+  setEmailError(
+    "Enter a valid email address"
+  );
+
+}
+
+else {
+
+  setEmailError("");
+
+}
+
+  };
+
+const handlePhoneChange =
+  (e) => {
+
+    const value =
+      e.target.value
+        .replace(
+          /\D/g,
+          ""
+        )
+        .slice(
+          0,
+          10
+        );
+
+    setPhone(value);
+
+    const phoneRegex =
+      /^[6-9][0-9]{9}$/;
+
+    if (!value) {
+
+  setPhoneError("");
+
+}
+
+else if (
+  !phoneRegex.test(value)
+) {
+
+  setPhoneError(
+    "Enter a valid phone number"
+  );
+
+}
+
+else {
+
+  setPhoneError("");
+
+}
+
+  };
+
+const handlePasswordChange =
+  (e) => {
+
+    const value =
+      e.target.value;
+
+    setPassword(value);
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!value) {
+
+  setPasswordError("");
+
+}
+
+else if (
+  !passwordRegex.test(value)
+) {
+
+  setPasswordError(
+    "Password must contain uppercase, lowercase, number and special character and be at least 8 characters"
+  );
+
+}
+
+else {
+
+  setPasswordError("");
+
+}
+  };
   const handleRegister =
-    async (e) => {
+  async (e) => {
 
-      e.preventDefault();
+    e.preventDefault();
 
-      try {
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !password
+    ) {
 
-        setLoading(true);
+      return toast.error(
+        "Please fill all fields"
+      );
 
-        await API.post(
-          "/auth/register",
-          {
-            name,
-            email,
-            phone,
-            password,
-          }
-        );
+    }
 
-        toast.success(
-          "Registration Successful"
-        );
+    if (
+      nameError ||
+      emailError ||
+      phoneError ||
+      passwordError
+    ) {
 
-        navigate("/login");
+      return toast.error(
+        "Please fix validation errors"
+      );
 
-      } catch (error) {
+    }
 
-        toast.error(
-          error.response?.data
-            ?.message ||
-            "Something went wrong"
-        );
+    try {
 
-      } finally {
+      setLoading(true);
 
-        setLoading(false);
+      await API.post(
+        "/auth/register",
+        {
+          name,
+          email,
+          phone,
+          password,
+        }
+      );
 
-      }
+      toast.success(
+        "Registration Successful"
+      );
 
-    };
+      navigate("/login");
 
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.message ||
+        "Something went wrong"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  
   return (
     <div className="w-full max-w-md mx-auto">
 
@@ -150,14 +349,25 @@ const Register = () => {
               type="text"
               placeholder="Enter your full name"
               value={name}
-              onChange={(e) =>
-                setName(
-                  e.target.value
-                )
-              }
+              onChange={
+              handleNameChange
+            }
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
               required
             />
+            
+          {
+            nameError && (
+
+            <p className="text-red-500 text-sm mt-1">
+
+            {nameError}
+
+            </p>
+
+                )
+          }
+
 
           </div>
 
@@ -174,15 +384,24 @@ const Register = () => {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) =>
-                setEmail(
-                  e.target.value
-                )
-              }
+              onChange={
+  handleEmailChange
+}
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
               required
             />
 
+{
+  emailError && (
+
+    <p className="text-red-500 text-sm mt-1">
+
+      {emailError}
+
+    </p>
+
+  )
+}
           </div>
 
           {/* PHONE */}
@@ -198,13 +417,23 @@ const Register = () => {
               type="text"
               placeholder="Enter phone number"
               value={phone}
-              onChange={(e) =>
-                setPhone(
-                  e.target.value
-                )
-              }
+              onChange={handlePhoneChange}
               className="w-full border border-gray-300 rounded-2xl px-5 py-3 outline-none focus:border-blue-600"
+              required
             />
+
+{
+  phoneError && (
+
+    <p className="text-red-500 text-sm mt-1">
+
+      {phoneError}
+
+    </p>
+
+  )
+}
+
 
           </div>
 
@@ -227,14 +456,13 @@ const Register = () => {
                 }
                 placeholder="Create password"
                 value={password}
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
+               onChange={
+  handlePasswordChange
+}
                 className="w-full border border-gray-300 rounded-2xl px-5 py-3 pr-14 outline-none focus:border-blue-600"
                 required
               />
+
 
               <button
                 type="button"
@@ -255,7 +483,17 @@ const Register = () => {
               </button>
 
             </div>
+                {
+  passwordError && (
 
+    <p className="text-red-500 text-sm mt-1">
+
+      {passwordError}
+
+    </p>
+
+  )
+}
           </div>
 
           {/* BUTTON */}
