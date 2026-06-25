@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 
 import API from "../../utils/api";
 
+import Select from "react-select";
+
 const Expenses = () => {
 
   const [showModal,
@@ -46,6 +48,18 @@ const Expenses = () => {
     setDate] =
     useState("");
 
+    const categoryOptions = [
+  { value: "Food", label: "🍔 Food" },
+  { value: "Transportation", label: "🚗 Transportation" },
+  { value: "Shopping", label: "🛍️ Shopping" },
+  { value: "Bills", label: "💡 Bills" },
+  { value: "Entertainment", label: "🎬 Entertainment" },
+  { value: "Health", label: "🏥 Health" },
+  { value: "Education", label: "📚 Education" },
+  { value: "Travel", label: "✈️ Travel" },
+  { value: "Investment", label: "📈 Investment" },
+  { value: "Other", label: "📦 Other" },
+];
   // FETCH
   const fetchExpenses =
     async () => {
@@ -367,56 +381,228 @@ const Expenses = () => {
                 className="mt-8 space-y-5"
               >
 
-                <input
-                  type="text"
-                  placeholder="Expense Title"
-                  value={title}
-                  onChange={(e) =>
-                    setTitle(
-                      e.target.value
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-                  required
-                />
+                {/* Expense Title */}
+<div>
 
-                <input
-                  type="text"
-                  placeholder="Category"
-                  value={category}
-                  onChange={(e) =>
-                    setCategory(
-                      e.target.value
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-                  required
-                />
+  <label className="block mb-2 text-sm font-medium text-gray-700">
 
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={amount}
-                  onChange={(e) =>
-                    setAmount(
-                      e.target.value
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-                  required
-                />
+    Expense Title
 
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) =>
-                    setDate(
-                      e.target.value
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-2xl px-5 py-3"
-                  required
-                />
+  </label>
+
+  <input
+    type="text"
+    placeholder="Enter expense title"
+    value={title}
+    onChange={(e) =>
+      setTitle(
+        e.target.value
+      )
+    }
+    className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+    required
+  />
+
+</div>
+
+{/* Category */}
+<div>
+
+  <label className="block mb-2 text-sm font-medium text-gray-700">
+
+    Category
+
+  </label>
+
+  <Select
+    options={categoryOptions}
+    placeholder="Select Expense Category"
+    value={
+      categoryOptions.find(
+        (item) =>
+          item.value === category
+      )
+    }
+    onChange={(selected) =>
+      setCategory(selected.value)
+    }
+    isSearchable={false}
+    styles={{
+
+      control: (base, state) => ({
+
+        ...base,
+
+        minHeight: "56px",
+
+        borderRadius: "9999px",
+
+        paddingLeft: "12px",
+
+        border: state.isFocused
+          ? "2px solid #DC2626"
+          : "1px solid #D1D5DB",
+
+        boxShadow: state.isFocused
+          ? "0 0 0 4px rgba(220,38,38,0.10)"
+          : "none",
+
+        cursor: "pointer",
+
+        transition: "all .25s ease",
+
+        "&:hover": {
+
+          border: "1px solid #DC2626",
+
+        },
+
+      }),
+
+      placeholder: (base) => ({
+
+        ...base,
+
+        color: "#9CA3AF",
+
+        fontSize: "16px",
+
+      }),
+
+      singleValue: (base) => ({
+
+        ...base,
+
+        color: "#111827",
+
+        fontWeight: 500,
+
+      }),
+
+      menu: (base) => ({
+
+        ...base,
+
+        borderRadius: "20px",
+
+        overflow: "hidden",
+
+        marginTop: "10px",
+
+        boxShadow:
+          "0 15px 40px rgba(0,0,0,.12)",
+
+        border: "1px solid #E5E7EB",
+
+      }),
+
+      menuList: (base) => ({
+
+        ...base,
+
+        padding: "8px",
+
+      }),
+
+      option: (base, state) => ({
+
+        ...base,
+
+        borderRadius: "14px",
+
+        marginBottom: "4px",
+
+        padding: "12px 16px",
+
+        cursor: "pointer",
+
+        backgroundColor: state.isSelected
+          ? "#DC2626"
+          : state.isFocused
+          ? "#FEE2E2"
+          : "#FFFFFF",
+
+        color: state.isSelected
+          ? "#FFFFFF"
+          : "#111827",
+
+        fontWeight: 500,
+
+      }),
+
+      indicatorSeparator: () => ({
+
+        display: "none",
+
+      }),
+
+      dropdownIndicator: (base) => ({
+
+        ...base,
+
+        color: "#6B7280",
+
+        paddingRight: "18px",
+
+        "&:hover": {
+
+          color: "#DC2626",
+
+        },
+
+      }),
+
+    }}
+  />
+
+</div>
+
+{/* Amount */}
+<div>
+
+  <label className="block mb-2 text-sm font-medium text-gray-700">
+
+    Amount
+
+  </label>
+
+  <input
+    type="number"
+    placeholder="Enter amount"
+    value={amount}
+    onChange={(e) =>
+      setAmount(
+        e.target.value
+      )
+    }
+    className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+    required
+  />
+
+</div>
+
+{/* Date */}
+<div>
+
+  <label className="block mb-2 text-sm font-medium text-gray-700">
+
+    Expense Date
+
+  </label>
+
+  <input
+    type="date"
+    value={date}
+    onChange={(e) =>
+      setDate(
+        e.target.value
+      )
+    }
+    className="w-full border border-gray-300 rounded-2xl px-5 py-3"
+    required
+  />
+
+</div>
 
                 <button
                   disabled={submitting}
