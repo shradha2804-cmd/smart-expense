@@ -37,10 +37,6 @@ const Navbar = () => {
             Features
           </NavLink>
 
-          <NavLink to="/pricing" className={navLinkStyle}>
-            Pricing
-          </NavLink>
-
           <NavLink to="/about" className={navLinkStyle}>
             About
           </NavLink>
@@ -90,14 +86,6 @@ const Navbar = () => {
             onClick={() => setMenuOpen(false)}
           >
             Features
-          </NavLink>
-
-          <NavLink
-            to="/pricing"
-            className={navLinkStyle}
-            onClick={() => setMenuOpen(false)}
-          >
-            Pricing
           </NavLink>
 
           <NavLink

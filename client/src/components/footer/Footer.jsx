@@ -62,7 +62,6 @@ const Footer = () => {
 
             <li>Home</li>
             <li>Features</li>
-            <li>Pricing</li>
             <li>Contact</li>
 
           </ul>
