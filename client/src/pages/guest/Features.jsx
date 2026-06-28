@@ -56,7 +56,7 @@ const features = [
     icon: <FaMobileAlt />,
     title: "Mobile Responsive",
     description:
-      "Access Finora beautifully on desktop, tablet and mobile.",
+      "Access Smart Expense TRacker beautifully on desktop, tablet and mobile.",
     color: "pink",
   },
 
@@ -85,7 +85,7 @@ const Features = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-20 text-center">
 
         <div className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm md:text-base">
-          Finora Features
+          Smart Expense TRacker Features
         </div>
 
         <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold text-[#0B132B] leading-tight">
@@ -99,7 +99,7 @@ const Features = () => {
 
         <p className="mt-8 text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
 
-          Finora provides powerful tools to manage expenses,
+          Smart Expense TRacker provides powerful tools to manage expenses,
           income, analytics, reports and financial planning
           with a modern responsive dashboard.
 
@@ -174,7 +174,7 @@ const Features = () => {
 
             <p className="mt-8 text-lg text-gray-600 leading-relaxed">
 
-              Finora combines beautiful dashboards,
+              Smart Expense TRacker combines beautiful dashboards,
               powerful analytics and secure authentication
               to give users complete control over
               their finances.

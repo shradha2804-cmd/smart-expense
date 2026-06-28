@@ -127,7 +127,7 @@ const AdminSidebar = ({
 
               <h1 className="text-3xl font-bold">
 
-                Finora
+                Smart Expense Tracker
 
               </h1>
 

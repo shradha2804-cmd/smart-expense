@@ -21,7 +21,7 @@ const Footer = () => {
         <div>
 
           <h2 className="text-5xl font-bold text-primary">
-            Finora
+            Smart Expense Tracker
           </h2>
 
           <p className="mt-6 text-gray-500 text-xl leading-relaxed">
@@ -79,7 +79,7 @@ const Footer = () => {
 
             <div className="flex items-center gap-4">
               <HiOutlineMail className="text-primary text-2xl" />
-              <span>support@finora.com</span>
+              <span>support@SmartExpenseTracker.com</span>
             </div>
 
             <div className="flex items-center gap-4">
@@ -95,7 +95,7 @@ const Footer = () => {
 
       {/* BOTTOM */}
       <div className="border-t border-gray-200 py-6 text-center text-gray-500 text-lg">
-        © 2026 Finora. All rights reserved.
+        © 2026 Smart Expense Tracker. All rights reserved.
       </div>
 
     </footer>

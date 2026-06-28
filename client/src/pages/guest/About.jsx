@@ -17,7 +17,7 @@ const About = () => {
         <div>
 
           <div className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm md:text-base">
-            About Finora
+            About Smart Expense Tracker
           </div>
 
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[#0B132B]">
@@ -33,7 +33,7 @@ const About = () => {
 
           <p className="mt-8 text-base md:text-lg text-gray-600 leading-relaxed">
 
-            Finora is a modern smart expense tracker platform
+            Smart Expense Tracker is a modern smart expense tracker platform
             designed to help users manage their daily finances
             with ease, security and powerful analytics.
 
@@ -42,7 +42,7 @@ const About = () => {
           <p className="mt-5 text-base md:text-lg text-gray-600 leading-relaxed">
 
             From tracking expenses to visualizing reports,
-            Finora simplifies financial management using
+            Smart Expense Tracker simplifies financial management using
             beautiful dashboards and intelligent insights.
 
           </p>

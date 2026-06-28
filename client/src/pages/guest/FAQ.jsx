@@ -2,8 +2,8 @@ import React from "react";
 
 const faqs = [
   {
-    question: "Is Finora free to use?",
-    answer: "Yes, Finora offers a free basic plan.",
+    question: "Is Smart Expense TRacker free to use?",
+    answer: "Yes, Smart Expense TRacker offers a free basic plan.",
   },
 
   {
@@ -13,7 +13,7 @@ const faqs = [
 
   {
     question: "Can I track income and expenses?",
-    answer: "Yes, Finora supports complete financial tracking.",
+    answer: "Yes, Smart Expense TRacker supports complete financial tracking.",
   },
 ];
 

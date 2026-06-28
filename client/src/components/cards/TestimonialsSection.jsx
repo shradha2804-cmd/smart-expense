@@ -5,7 +5,7 @@ const testimonials = [
     name: "Rahul Sharma",
     role: "Software Engineer",
     review:
-      "Finora completely changed the way I manage my monthly expenses.",
+      "Smart Tracker completely changed the way I manage my monthly expenses.",
   },
 
   {

@@ -23,7 +23,7 @@ const Navbar = () => {
           to="/"
           className="text-2xl md:text-3xl font-bold text-blue-600"
         >
-          Finora
+          Smart Expense Tracker
         </Link>
 
         {/* DESKTOP MENU */}

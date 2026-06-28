@@ -17,7 +17,7 @@ const CTASection = () => {
 
         <p className="mt-6 text-gray-300 text-lg">
 
-          Join thousands of users using Finora to
+          Join thousands of users using Smart Tracker to
           track expenses and save money.
 
         </p>

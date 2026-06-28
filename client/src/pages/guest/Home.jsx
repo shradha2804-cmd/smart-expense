@@ -27,7 +27,7 @@ const Home = () => {
               Smarter
             </span>
 
-            With Finora
+            With Smart Expense TRacker
 
           </h1>
 

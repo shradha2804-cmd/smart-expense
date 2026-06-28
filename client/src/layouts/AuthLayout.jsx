@@ -27,7 +27,7 @@ const AuthLayout = () => {
               to="/"
               className="text-4xl font-bold"
             >
-              Finora
+              Smart Expense Tracker
             </Link>
 
             <h1 className="mt-20 text-5xl font-bold leading-tight">
@@ -43,7 +43,7 @@ const AuthLayout = () => {
 
               Manage expenses, track income,
               visualize reports and control your
-              finances smarter with Finora.
+              finances smarter with Smart Expense Tracker.
 
             </p>
 
@@ -57,7 +57,7 @@ const AuthLayout = () => {
             </h3>
 
             <p className="mt-4 text-blue-100 leading-relaxed">
-              Finora helps users manage finances
+              Smart Expense Tracker helps users manage finances
               with modern dashboards and secure systems.
             </p>
 

@@ -299,7 +299,7 @@ else {
 
         <p className="mt-2 text-gray-500 text-sm md:text-base">
 
-          Join Finora and start managing smarter.
+          Join Smart Expense Tracker and start managing smarter.
 
         </p>
 

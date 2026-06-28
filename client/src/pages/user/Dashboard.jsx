@@ -139,7 +139,7 @@ const Dashboard = () => {
 
         <p className="mt-2 text-gray-500">
 
-          Welcome back to Finora Dashboard
+          Welcome back to Smart Expense TRacker Dashboard
 
         </p>
 

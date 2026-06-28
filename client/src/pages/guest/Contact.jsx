@@ -92,7 +92,7 @@ const Contact = () => {
 
         <div className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm md:text-base">
 
-          Contact Finora
+          Contact Smart Expense Tracker
 
         </div>
 
@@ -142,7 +142,7 @@ const Contact = () => {
 
               <p className="mt-2 text-gray-500">
 
-                support@finora.com
+                support@SmartExpenseTracker.com
 
               </p>
 

@@ -95,7 +95,7 @@ const Sidebar = ({
 
             <h1 className="text-4xl font-bold text-blue-600">
 
-              Finora
+              Smart Expense Tracker
 
             </h1>
 
